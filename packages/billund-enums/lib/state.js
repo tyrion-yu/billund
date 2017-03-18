@@ -1,0 +1,20 @@
+'use strict';
+
+// 初始的state状态的key
+const INITIAL_STATE = '__LEGO_INITIAL_STATE__';
+// 设置自有state的ACTION_TYPE
+const LEGO_ACTION_TYPE_SET_OWN_STATE = '__LEGO_ACTION_TYPE_SET_OWN_STATE__';
+// WIDGET在state中的oneState的前缀
+const PREFIX_WIDGET_OWN_STATE_KEY = '__WIDGET_ID_';
+// 刷新的ACTION_TYPE
+const LEGO_ACTION_TYPE_REFRESH = '__LEGO_ACTION_TYPE_REFRESH__';
+// 拿取属性方法的前缀
+const WIDGET_VUEX_GETTERS_PREFIX = '__legoGetOwnprops-';
+
+module.exports = {
+    INITIAL_STATE,
+    LEGO_ACTION_TYPE_SET_OWN_STATE,
+    PREFIX_WIDGET_OWN_STATE_KEY,
+    LEGO_ACTION_TYPE_REFRESH,
+    WIDGET_VUEX_GETTERS_PREFIX
+};
