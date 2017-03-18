@@ -1,15 +1,18 @@
 {
-  "name": "billund-enums",
+  "name": "billund-utils",
   "version": "0.0.3",
-  "description": "billund enums",
+  "description": "billund utils method",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "billund",
-    "enums"
+    "utils"
   ],
   "author": "robin.li",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.15.0"
+  }
 }

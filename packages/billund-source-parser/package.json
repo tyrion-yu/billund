@@ -1,0 +1,23 @@
+{
+  "name": "billund-source-parser",
+  "version": "0.0.3",
+  "description": "billund source code parser",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "billund",
+    "source",
+    "parser"
+  ],
+  "author": "robin.li",
+  "license": "MIT",
+  "dependencies": {
+    "babel-generator": "^6.22.0",
+    "babel-traverse": "^6.22.1",
+    "babel-types": "^6.22.0",
+    "babylon": "^6.15.0",
+    "billund-enums": "^0.0.3"
+  }
+}
