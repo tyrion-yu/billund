@@ -32,6 +32,7 @@ function extractRequireAndExport(source) {
             if (!isRequire) return;
 
             const parentPath = nodePath.findParent((pa) => pa.isVariableDeclarator());
+            if (!parentPath) return;
             const key = parentPath.node.id.name;
 
             const requireVal = nodePath.node.arguments[0].value;

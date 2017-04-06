@@ -31,26 +31,6 @@ function getFilteredFiles(rootDir, options) {
     return ret;
 }
 
-/**
- * 检查一些核心依赖是否match
- *
- * @param  {Object} rootPkg - 项目的package.json
- * @param  {Object} vendorPkg - 依赖包的package.json
- */
-function vendorMatched(rootPkg, vendorPkg) {
-    if (!(rootPkg && vendorPkg && vendorPkg.dependencies)) throw new Error(`missing require params in vendorMatched`);
-    const vendorDependencies = vendorPkg.dependencies;
-    const rootDependencies = rootPkg.dependencies || {};
-    Object.keys(vendorDependencies).forEach((libName) => {
-        const libVersion = vendorDependencies[libName];
-        // 严格匹配
-        if (libVersion !== rootDependencies[libName]) {
-            throw new Error(`${libName} notMatched with lego-vendors.now is ${rootDependencies[libName]},but in lego-vendors is ${libVersion}`);
-        }
-    });
-}
-
 module.exports = {
-    getFilteredFiles,
-    vendorMatched
+    getFilteredFiles
 };
