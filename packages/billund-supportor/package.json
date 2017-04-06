@@ -21,7 +21,7 @@
     "es6-promise": "^4.0.5",
     "qs": "^6.3.1",
     "regenerator-runtime": "^0.10.3",
-    "billund-enums": "^0.1.1"
+    "billund-enums": "^0.1.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.4",
