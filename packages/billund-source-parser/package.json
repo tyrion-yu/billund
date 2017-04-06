@@ -1,6 +1,6 @@
 {
   "name": "billund-source-parser",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "billund source code parser",
   "main": "lib/index.js",
   "scripts": {
