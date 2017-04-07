@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("React"), require("ReactRedux"), require("Vue"), require("ReactDom"), require("Redux"), require("Vuex"));
+		module.exports = factory(require("react"), require("react-redux"), require("vue"), require("react-dom"), require("redux"), require("vuex"));
 	else if(typeof define === 'function' && define.amd)
-		define(["React", "ReactRedux", "Vue", "ReactDom", "Redux", "Vuex"], factory);
+		define(["react", "react-redux", "vue", "react-dom", "redux", "vuex"], factory);
 	else if(typeof exports === 'object')
-		exports["BillundSupportor"] = factory(require("React"), require("ReactRedux"), require("Vue"), require("ReactDom"), require("Redux"), require("Vuex"));
+		exports["BillundSupportor"] = factory(require("react"), require("react-redux"), require("vue"), require("react-dom"), require("redux"), require("vuex"));
 	else
 		root["BillundSupportor"] = factory(root["React"], root["ReactRedux"], root["Vue"], root["ReactDom"], root["Redux"], root["Vuex"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_11__, __WEBPACK_EXTERNAL_MODULE_12__, __WEBPACK_EXTERNAL_MODULE_32__, __WEBPACK_EXTERNAL_MODULE_33__, __WEBPACK_EXTERNAL_MODULE_34__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_11__, __WEBPACK_EXTERNAL_MODULE_12__, __WEBPACK_EXTERNAL_MODULE_33__, __WEBPACK_EXTERNAL_MODULE_34__, __WEBPACK_EXTERNAL_MODULE_35__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -83,18 +83,20 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 
-const renderType = __webpack_require__(21);
-const state = __webpack_require__(22);
-const widget = __webpack_require__(24);
-const render = __webpack_require__(20);
-const supportor = __webpack_require__(23);
+const renderType = __webpack_require__(22);
+const state = __webpack_require__(23);
+const widget = __webpack_require__(25);
+const render = __webpack_require__(21);
+const supportor = __webpack_require__(24);
+const external = __webpack_require__(20);
 
 module.exports = {
     renderType,
     state,
     widget,
     render,
-    supportor
+    supportor,
+    external
 };
 
 
@@ -593,7 +595,7 @@ var RenderTypeEnums = Enums.renderType;
 var StateEnums = Enums.state;
 
 var React = __webpack_require__(10);
-var ReactDom = __webpack_require__(32);
+var ReactDom = __webpack_require__(33);
 var ReactRedux = __webpack_require__(11);
 var Vue = __webpack_require__(12);
 
@@ -724,12 +726,12 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 __webpack_require__(6).polyfill();
-window.regeneratorRuntime = __webpack_require__(30);
+window.regeneratorRuntime = __webpack_require__(31);
 // https://www.npmjs.com/package/browser-cookies
-var Cookies = __webpack_require__(25);
-var qs = __webpack_require__(27);
+var Cookies = __webpack_require__(26);
+var qs = __webpack_require__(28);
 
-var co = __webpack_require__(26);
+var co = __webpack_require__(27);
 var Enums = __webpack_require__(0);
 var WidgetEnums = Enums.widget;
 var StateEnums = Enums.state;
@@ -1711,7 +1713,7 @@ function flush() {
 function attemptVertx() {
   try {
     var r = require;
-    var vertx = __webpack_require__(35);
+    var vertx = __webpack_require__(36);
     vertxNext = vertx.runOnLoop || vertx.runOnContext;
     return useVertxTimer();
   } catch (e) {
@@ -3212,7 +3214,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var React = __webpack_require__(10);
-var Redux = __webpack_require__(33);
+var Redux = __webpack_require__(34);
 var ReactRedux = __webpack_require__(11);
 
 var BaseSupportor = __webpack_require__(5);
@@ -3487,7 +3489,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 __webpack_require__(6).polyfill();
 var Vue = __webpack_require__(12);
-var Vuex = __webpack_require__(34);
+var Vuex = __webpack_require__(35);
 var BaseSupportor = __webpack_require__(5);
 var Enums = __webpack_require__(0);
 var WidgetEnums = Enums.widget;
@@ -4006,6 +4008,38 @@ module.exports = {
 "use strict";
 
 
+const REACT_ROOT_EXTERNAL = 'window React';
+
+const REACT_DOM_ROOT_EXTERNAL = 'window ReactDom';
+
+const REACT_CSS_TRANSITION_GROUP_ROOT_EXTERNAL = 'window ReactAddonsCssTransitionGroup';
+
+const REDUX_ROOT_EXTERNAL = 'window Redux';
+
+const REACT_REDUX_ROOT_EXTERNAL = 'window ReactRedux';
+
+const VUE_ROOT_EXTERNAL = 'window Vue';
+
+const VUEX_ROOT_EXTERNAL = 'window Vuex';
+
+module.exports = {
+    REACT_ROOT_EXTERNAL,
+    REACT_DOM_ROOT_EXTERNAL,
+    REACT_CSS_TRANSITION_GROUP_ROOT_EXTERNAL,
+    REDUX_ROOT_EXTERNAL,
+    REACT_REDUX_ROOT_EXTERNAL,
+    VUE_ROOT_EXTERNAL,
+    VUEX_ROOT_EXTERNAL
+};
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 // 展示内容的div,不要在意拼错了...
 const ID_MAIN_PAGE = 'lego-mian-page';
 // 服务器当前时间ID
@@ -4024,7 +4058,7 @@ module.exports = {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4045,7 +4079,7 @@ module.exports = {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4072,7 +4106,7 @@ module.exports = {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4080,7 +4114,7 @@ module.exports = {
 // 对外暴露的全局的支持工具
 const BROWSER_SUPPORTOR = '__LEGO_BROWSER_SUPPORTOR__';
 // 支持组件的包名
-const BROWSER_SUPPORTOR_PACKAGE_NAME = 'lego-supportor';
+const BROWSER_SUPPORTOR_PACKAGE_NAME = 'billund-supportor';
 // 注册预处理的方法
 const BROWSER_SUPPORTOR_REGIST_PREPROCESSOR_NAME = 'useContextPreProcessor';
 
@@ -4092,7 +4126,7 @@ module.exports = {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4128,7 +4162,7 @@ module.exports = {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 exports.defaults = {};
@@ -4227,7 +4261,7 @@ exports.all = function() {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports) {
 
 
@@ -4470,14 +4504,14 @@ function isObject(val) {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var stringify = __webpack_require__(29);
-var parse = __webpack_require__(28);
+var stringify = __webpack_require__(30);
+var parse = __webpack_require__(29);
 var formats = __webpack_require__(8);
 
 module.exports = {
@@ -4488,7 +4522,7 @@ module.exports = {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4662,7 +4696,7 @@ module.exports = function (str, opts) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4876,7 +4910,7 @@ module.exports = function (object, opts) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {// This method of obtaining a reference to the global object needs to be
@@ -4897,7 +4931,7 @@ var oldRuntime = hadRuntime && g.regeneratorRuntime;
 // Force reevalutation of runtime.js.
 g.regeneratorRuntime = undefined;
 
-module.exports = __webpack_require__(31);
+module.exports = __webpack_require__(32);
 
 if (hadRuntime) {
   // Restore the original runtime.
@@ -4914,7 +4948,7 @@ if (hadRuntime) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {/**
@@ -5644,12 +5678,6 @@ if (hadRuntime) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(7)))
 
 /***/ }),
-/* 32 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_32__;
-
-/***/ }),
 /* 33 */
 /***/ (function(module, exports) {
 
@@ -5663,6 +5691,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_34__;
 
 /***/ }),
 /* 35 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_35__;
+
+/***/ }),
+/* 36 */
 /***/ (function(module, exports) {
 
 /* (ignored) */

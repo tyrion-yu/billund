@@ -1,18 +1,18 @@
 'use strict';
 
-const REACT_ROOT_EXTERNAL = 'React';
+const REACT_ROOT_EXTERNAL = 'window React';
 
-const REACT_DOM_ROOT_EXTERNAL = 'ReactDom';
+const REACT_DOM_ROOT_EXTERNAL = 'window ReactDom';
 
-const REACT_CSS_TRANSITION_GROUP_ROOT_EXTERNAL = 'ReactAddonsCssTransitionGroup';
+const REACT_CSS_TRANSITION_GROUP_ROOT_EXTERNAL = 'window ReactAddonsCssTransitionGroup';
 
-const REDUX_ROOT_EXTERNAL = 'Redux';
+const REDUX_ROOT_EXTERNAL = 'window Redux';
 
-const REACT_REDUX_ROOT_EXTERNAL = 'ReactRedux';
+const REACT_REDUX_ROOT_EXTERNAL = 'window ReactRedux';
 
-const VUE_ROOT_EXTERNAL = 'Vue';
+const VUE_ROOT_EXTERNAL = 'window Vue';
 
-const VUEX_ROOT_EXTERNAL = 'Vuex';
+const VUEX_ROOT_EXTERNAL = 'window Vuex';
 
 module.exports = {
     REACT_ROOT_EXTERNAL,

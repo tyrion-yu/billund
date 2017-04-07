@@ -11,13 +11,42 @@ module.exports = {
         libraryTarget: 'umd'
     },
     externals: {
-        react: 'React',
-        'react-dom': 'ReactDom',
-        'react-addons-css-transition-group': 'ReactAddonsCssTransitionGroup',
-        redux: 'Redux',
-        'react-redux': 'ReactRedux',
-        vue: 'Vue',
-        vuex: 'Vuex'
+        react: {
+            root: 'React',
+            commonjs2: 'react',
+            commonjs: 'react',
+            amd: 'react'
+        },
+        redux: {
+            root: 'Redux',
+            commonjs2: 'redux',
+            commonjs: 'redux',
+            amd: 'redux'
+        },
+        'react-redux': {
+            root: 'ReactRedux',
+            commonjs2: 'react-redux',
+            commonjs: 'react-redux',
+            amd: 'react-redux'
+        },
+        'react-dom': {
+            root: 'ReactDom',
+            commonjs2: 'react-dom',
+            commonjs: 'react-dom',
+            amd: 'react-dom'
+        },
+        vue: {
+            root: 'Vue',
+            commonjs2: 'vue',
+            commonjs: 'vue',
+            amd: 'vue'
+        },
+        vuex: {
+            root: 'Vuex',
+            commonjs2: 'vuex',
+            commonjs: 'vuex',
+            amd: 'vuex'
+        }
     },
     module: {
         rules: [{

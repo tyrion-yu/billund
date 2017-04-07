@@ -2,7 +2,7 @@
   "name": "billund-supportor",
   "version": "0.1.2",
   "description": "billund browser supportor",
-  "main": "lib/index.js",
+  "main": "built/billund-supportor.js",
   "scripts": {
     "clean": "rimraf dist",
     "build": "webpack",
