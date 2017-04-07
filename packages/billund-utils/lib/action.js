@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * 归一化action路径
+ * 归一化action路径，目前暂时没有使用
  *
  * @param  {String} actionPath - action的路径
  * @return {String}
