@@ -2,9 +2,6 @@
 
 const RENDER_TYPE = require('billund-enums').renderType;
 
-const reactRender = require('./lib/react.js');
-const vueRender = require('./lib/vue.js');
-
 /**
  * 渲染组件内容
  *
@@ -15,8 +12,10 @@ const vueRender = require('./lib/vue.js');
 function* render(widget, data) {
     const renderType = widget.renderType;
     if (renderType == RENDER_TYPE.RENDER_TYPE_VUE) {
+        const vueRender = require('./lib/vue.js');
         return yield vueRender(widget, data);
     }
+    const reactRender = require('./lib/react.js');
     return reactRender(widget, data);
 }
 
