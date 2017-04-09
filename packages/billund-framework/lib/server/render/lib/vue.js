@@ -1,7 +1,5 @@
 'use strict';
 
-// 设置VUE_ENV enviroment variable to "server",作用是在服务端取消对数据对象的监控,能够增强性能
-process.env.VUE_ENV = 'server';
 const isDev = (process.env.LEGO_ENV === 'development' || process.env.BILLUND_ENV === 'development');
 
 const _ = require('lodash');

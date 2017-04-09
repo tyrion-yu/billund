@@ -3,6 +3,16 @@
 const RENDER_TYPE = require('billund-enums').renderType;
 
 /**
+ * 一些预处理方法
+ */
+function doInit() {
+    process.env.REACT_ENV = 'server';
+    // 设置VUE_ENV enviroment variable to "server",作用是在服务端取消对数据对象的监控,能够增强性能
+    process.env.VUE_ENV = 'server';
+}
+doInit();
+
+/**
  * 渲染组件内容
  *
  * @param  {Object} widget - 组件
