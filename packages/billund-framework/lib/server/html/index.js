@@ -9,6 +9,8 @@ const widgetUtil = require('./util/widgetutil');
 const store = require('../store/index');
 const render = require('../render/index');
 
+const isDev = (process.env.LEGO_ENV === 'development' || process.env.BILLUND_ENV === 'development');
+
 /*
     渲染插件
  */
@@ -33,6 +35,10 @@ const DEFAULT_BODY_PLUGINS = [
     backAutoRefreshPlugin
 ];
 
+const widgetCaches = require('lru-cache')({
+    max: 1000,
+    maxAge: 1000 * 60 * 60
+});
 const baseopt = {};
 
 /**
@@ -153,6 +159,7 @@ function* execute(context) {
     });
 
     context.body = `
+    <!DOCTYPE html>
     <html>
         <head>${headerResults.join('')}</head>
         <body>${bodyResults.join('')}</body>
@@ -309,11 +316,45 @@ function wrapToSuccGen(context, widget) {
     return function*() {
         // 参数需要clone下,以免被widget的数据执行函数修改了
         const params = _.clone(widget.params);
+
+        /*
+            1.尝试计算serverCachekey
+            2.尝试去cache里取值
+            3.有值的话直接返回，但是不要更新cache的内容
+            4.如果没有值，正常拉取，最后根据是否有cacheKey来决定是否需要更新内存
+         */
+        const shouldUseCache = !isDev && widget.serverCacheKey;
+        let computedServerCacheKey = '';
+        try {
+            if (shouldUseCache) {
+                computedServerCacheKey = `widgetName:${widget.name}|cacheKey:${widget.serverCacheKey(widget.params)}`;
+            }
+        } catch (e) {
+            console.warm(`compute serverCacheKey error:${e.stack}`);
+        }
+
+        const cachedResult = computedServerCacheKey && widgetCaches.get(computedServerCacheKey);
+        if (cachedResult && cachedResult.data && cachedResult.results) {
+            return {
+                resultType: 'success',
+                id: widget.id,
+                name: widget.name,
+                data: cachedResult.data,
+                results: cachedResult.results
+            };
+        }
+
         // 先执行数据方法,把数据上下文传入
         const dataGen = widget.dataGenerator.call(context, params);
         const data = yield dataGen;
-        // 执行渲染方法,之前已经计算过模板渲染类型了,直接传入
-        let results = yield render(widget, data);
+        const results = yield render(widget, data);
+
+        if (computedServerCacheKey) {
+            widgetCaches.set(computedServerCacheKey, {
+                data,
+                results
+            });
+        }
         return {
             resultType: 'success',
             id: widget.id,
