@@ -1,6 +1,6 @@
 {
   "name": "billund-utils",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "billund utils method",
   "main": "lib/index.js",
   "scripts": {

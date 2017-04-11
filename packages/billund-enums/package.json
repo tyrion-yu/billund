@@ -1,6 +1,6 @@
 {
   "name": "billund-enums",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "billund enums",
   "main": "built/billund-enums.js",
   "scripts": {
