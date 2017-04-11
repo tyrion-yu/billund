@@ -1,18 +1,25 @@
 {
-  "name": "billund-utils",
-  "version": "0.1.6",
-  "description": "billund utils method",
-  "main": "lib/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "billund",
-    "utils"
-  ],
-  "author": "robin.li",
-  "license": "MIT",
-  "dependencies": {
-    "lodash": "^4.15.0"
-  }
+    "name": "billund-utils",
+    "version": "0.1.6",
+    "description": "billund utils method",
+    "main": "lib/index.js",
+    "scripts": {
+        "test": "cross-env BABEL_ENV=commonjs NODE_ENV=test mocha --compilers js:babel-register --recursive",
+        "prepublish": "npm run test"
+    },
+    "keywords": [
+        "billund",
+        "utils"
+    ],
+    "author": "robin.li",
+    "license": "MIT",
+    "dependencies": {
+        "lodash": "^4.15.0"
+    },
+    "devDependencies": {
+        "cross-env": "^3.1.3",
+        "babel-register": "^6.3.13",
+        "expect": "^1.20.2",
+        "mocha": "^3.2.0"
+    }
 }

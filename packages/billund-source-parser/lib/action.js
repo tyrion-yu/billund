@@ -34,12 +34,12 @@ function extractWidgetInfos(source, state) {
         ObjectExpression(path) {
             const properties = path.node.properties || [];
             const nameProperty = properties.find((property) => {
-                return property.key.name === 'name';
+                return property.key.name === 'name' || property.key.value === 'name';
             });
             if (!nameProperty) return;
 
             const weightProperty = properties.find((property) => {
-                return property.key.name === 'weight';
+                return property.key.name === 'weight' || property.key.value === 'weight';
             });
             const weight = weightProperty ? weightProperty.value.value : 0;
             collectInfos.push({
@@ -110,7 +110,40 @@ function extractActionPath(source, state) {
     return actionPath;
 }
 
+/**
+ * 抓取store的配置
+ *
+ * @param  {String} source - 源代码
+ * @param  {Object} state - 状态对象,有如下几个字段:
+ * {
+ *
+ * }
+ * @return {String}
+ */
+function extractStoreConfig(source, state) {
+    if (!source) return '';
+
+    const ast = babylon.parse(source);
+    let storeConfigStr = '';
+
+    traverse(ast, {
+        ObjectExpression(path) {
+            const properties = path.node.properties || [];
+            const configProperty = properties.find((property) => {
+                return property.key.name === 'storeConfig' || property.key.value === 'storeConfig';
+            });
+            if (!configProperty) return;
+
+            const value = configProperty.value;
+            storeConfigStr = source.substring(value.start, value.end);
+        }
+    });
+
+    return storeConfigStr;
+}
+
 module.exports = {
     extractWidgetInfos,
-    extractActionPath
+    extractActionPath,
+    extractStoreConfig
 };

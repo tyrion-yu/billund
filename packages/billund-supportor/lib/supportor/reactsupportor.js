@@ -7,6 +7,7 @@ const ReactRedux = require('react-redux');
 const BaseSupportor = require('./basesupportor.js');
 const Enums = require('billund-enums');
 const StateEnums = Enums.state;
+const SupportorEnums = Enums.supportor;
 const Util = require('../util/index.js');
 
 /**
@@ -18,7 +19,7 @@ const Util = require('../util/index.js');
  */
 function DEFAULT_REDUCER(state, action) {
     /*
-    	检查action的type,如果设置自有state的action,应当默认处理
+        检查action的type,如果设置自有state的action,应当默认处理
      */
     if (action.type == StateEnums.LEGO_ACTION_TYPE_SET_OWN_STATE) {
         // 设置组件的自有state
@@ -39,7 +40,7 @@ class ReactSupportor extends BaseSupportor {
         // 回放机制的action列表
         this.toDispatchActions = [];
         /*
-        	为什么放在这里执行？因为后面两项方法都依赖store的初始化
+            为什么放在这里执行？因为后面两项方法都依赖store的初始化
          */
         this.injectLegoWidgetId();
         this.initStore();
@@ -114,6 +115,15 @@ class ReactSupportor extends BaseSupportor {
             });
         }
         this.decorateReducer(decoratedReducer);
+    }
+
+    /**
+     * 注册store配置
+     *
+     * @param  {Function} reducer - 注册reducers
+     */
+    [SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG](reducer) {
+        this.decorateReducer(reducer);
     }
 
     /**

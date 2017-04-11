@@ -182,7 +182,7 @@ class BaseFESupportor {
      *
      * @param  {GeneratorFunction} fn - 预处理器函数
      */
-    useContextPreProcessor(fn) {
+    [SupportorEnums.BROWSER_SUPPORTOR_REGIST_PREPROCESSOR_NAME](fn) {
         if (!fn) return;
         const self = this;
 
@@ -194,6 +194,13 @@ class BaseFESupportor {
             if (!err) return;
             console.log(err.stack);
         });
+    }
+
+    /**
+     * 注册store配置
+     */
+    [SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG]() {
+        throw new Error(`you should impletement ${SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG} function.`);
     }
 
     /**

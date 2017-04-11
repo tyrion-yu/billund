@@ -7,6 +7,7 @@ const BaseSupportor = require('./basesupportor.js');
 const Enums = require('billund-enums');
 const WidgetEnums = Enums.widget;
 const StateEnums = Enums.state;
+const SupportorEnums = Enums.supportor;
 const Util = require('../util/index.js');
 
 /**
@@ -22,7 +23,7 @@ class VueSupportor extends BaseSupportor {
     constructor() {
         super();
         /*
-        	为什么放在这里执行？因为后面两项方法都依赖store的初始化
+            为什么放在这里执行？因为后面两项方法都依赖store的初始化
          */
         this.useVuex();
         this.initStore();
@@ -123,6 +124,15 @@ class VueSupportor extends BaseSupportor {
         } else {
             this.store.registerModule(moduleId, newModule);
         }
+    }
+
+    /**
+     * 注册store配置,包括actions,mutations,getters
+     *
+     * @param  {Object} config - 注册对应的mutation
+     */
+    [SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG](config) {
+        this.hotUpdate(config);
     }
 
     /**
