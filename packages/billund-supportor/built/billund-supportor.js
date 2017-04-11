@@ -274,11 +274,14 @@ var BROWSER_SUPPORTOR = '__LEGO_BROWSER_SUPPORTOR__';
 var BROWSER_SUPPORTOR_PACKAGE_NAME = 'billund-supportor';
 // 注册预处理的方法
 var BROWSER_SUPPORTOR_REGIST_PREPROCESSOR_NAME = 'useContextPreProcessor';
+// 注册store配置
+var BROWSER_SUPPORTOR_REGIST_STORE_CONFIG = 'registStoreConfig';
 
 module.exports = {
     BROWSER_SUPPORTOR: BROWSER_SUPPORTOR,
     BROWSER_SUPPORTOR_PACKAGE_NAME: BROWSER_SUPPORTOR_PACKAGE_NAME,
-    BROWSER_SUPPORTOR_REGIST_PREPROCESSOR_NAME: BROWSER_SUPPORTOR_REGIST_PREPROCESSOR_NAME
+    BROWSER_SUPPORTOR_REGIST_PREPROCESSOR_NAME: BROWSER_SUPPORTOR_REGIST_PREPROCESSOR_NAME,
+    BROWSER_SUPPORTOR_REGIST_STORE_CONFIG: BROWSER_SUPPORTOR_REGIST_STORE_CONFIG
 };
 
 /***/ }),
@@ -1173,8 +1176,8 @@ var BaseFESupportor = function () {
          */
 
     }, {
-        key: 'useContextPreProcessor',
-        value: function useContextPreProcessor(fn) {
+        key: SupportorEnums.BROWSER_SUPPORTOR_REGIST_PREPROCESSOR_NAME,
+        value: function value(fn) {
             if (!fn) return;
             var self = this;
 
@@ -1201,6 +1204,16 @@ var BaseFESupportor = function () {
                 if (!err) return;
                 console.log(err.stack);
             });
+        }
+
+        /**
+         * 注册store配置
+         */
+
+    }, {
+        key: SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG,
+        value: function value() {
+            throw new Error('you should impletement ' + SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG + ' function.');
         }
 
         /**
@@ -3464,6 +3477,7 @@ var ReactRedux = __webpack_require__(11);
 var BaseSupportor = __webpack_require__(5);
 var Enums = __webpack_require__(0);
 var StateEnums = Enums.state;
+var SupportorEnums = Enums.supportor;
 var Util = __webpack_require__(1);
 
 /**
@@ -3475,7 +3489,7 @@ var Util = __webpack_require__(1);
  */
 function DEFAULT_REDUCER(state, action) {
     /*
-    	检查action的type,如果设置自有state的action,应当默认处理
+        检查action的type,如果设置自有state的action,应当默认处理
      */
     if (action.type == StateEnums.LEGO_ACTION_TYPE_SET_OWN_STATE) {
         // 设置组件的自有state
@@ -3500,7 +3514,7 @@ var ReactSupportor = function (_BaseSupportor) {
         // 回放机制的action列表
         _this.toDispatchActions = [];
         /*
-        	为什么放在这里执行？因为后面两项方法都依赖store的初始化
+            为什么放在这里执行？因为后面两项方法都依赖store的初始化
          */
         _this.injectLegoWidgetId();
         _this.initStore();
@@ -3586,6 +3600,18 @@ var ReactSupportor = function (_BaseSupportor) {
                 return Util.extend({}, state, _defineProperty({}, reducerKey, newOwnState));
             }
             this.decorateReducer(decoratedReducer);
+        }
+
+        /**
+         * 注册store配置
+         *
+         * @param  {Function} reducer - 注册reducers
+         */
+
+    }, {
+        key: SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG,
+        value: function value(reducer) {
+            this.decorateReducer(reducer);
         }
 
         /**
@@ -3738,6 +3764,7 @@ var BaseSupportor = __webpack_require__(5);
 var Enums = __webpack_require__(0);
 var WidgetEnums = Enums.widget;
 var StateEnums = Enums.state;
+var SupportorEnums = Enums.supportor;
 var Util = __webpack_require__(1);
 
 /**
@@ -3757,7 +3784,7 @@ var VueSupportor = function (_BaseSupportor) {
         _classCallCheck(this, VueSupportor);
 
         /*
-        	为什么放在这里执行？因为后面两项方法都依赖store的初始化
+            为什么放在这里执行？因为后面两项方法都依赖store的初始化
          */
         var _this = _possibleConstructorReturn(this, (VueSupportor.__proto__ || Object.getPrototypeOf(VueSupportor)).call(this));
 
@@ -3864,6 +3891,18 @@ var VueSupportor = function (_BaseSupportor) {
             } else {
                 this.store.registerModule(moduleId, newModule);
             }
+        }
+
+        /**
+         * 注册store配置,包括actions,mutations,getters
+         *
+         * @param  {Object} config - 注册对应的mutation
+         */
+
+    }, {
+        key: SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG,
+        value: function value(config) {
+            this.hotUpdate(config);
         }
 
         /**

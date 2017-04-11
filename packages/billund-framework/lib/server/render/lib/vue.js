@@ -29,7 +29,7 @@ function* render(widget, data) {
     // 判断是否是合理的数据类型
     isValidProps(data) || (data = {});
 
-    const provider = createProvider(vueConfig, data);
+    const provider = createProvider(vueConfig, data, widget.store);
 
     return yield new Promise((resolve, reject) => {
         renderer.renderToString(provider, (error, html) => {
@@ -59,10 +59,12 @@ function isValidProps(data) {
  *
  * @param  {Object} wrappedElement - 被包装的元素
  * @param  {Object} props - 数据
+ * @param  {Object} store - vuex store
  * @return {Object}
  */
-function createProvider(wrappedElement, props) {
+function createProvider(wrappedElement, props, store) {
     return new Vue({
+        store,
         components: {
             'wrapped-element': wrappedElement
         },

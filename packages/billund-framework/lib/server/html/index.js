@@ -6,6 +6,7 @@ const legoUtils = require('billund-utils');
 
 const parallel = require('../../util/parallel');
 const widgetUtil = require('./util/widgetutil');
+const store = require('../store/index');
 const render = require('../render/index');
 
 /*
@@ -65,15 +66,16 @@ function init(config) {
 function* execute(context) {
     const legoConfig = context.legoConfig;
     /*
-        进行一些基本的准备工作,例如区分核心非核心模块，自动填充静态资源等
+        进行一些基本的准备工作,例如区分核心非核心模块，自动填充静态资源，创建store等
      */
     const widgets = widgetUtil.convertWidgets(legoConfig.widgets || []);
     const mostImportantWidgets = legoUtils.widget.extractImportantWidgets(widgets);
     const otherWidgets = _.difference(widgets, mostImportantWidgets);
     const staticResources = exportStaticResources(legoConfig, widgets);
+    const stores = store.assemblyStore(legoConfig, mostImportantWidgets);
 
     const combineResults = yield {
-        important: renderMostImportantWidgets(context, mostImportantWidgets),
+        important: renderMostImportantWidgets(context, mostImportantWidgets, stores),
         other: renderOtherWidgets(context, otherWidgets)
     };
 
