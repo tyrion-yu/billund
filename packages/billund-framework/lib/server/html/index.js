@@ -337,6 +337,7 @@ function wrapToSuccGen(context, widget) {
         if (cachedResult && cachedResult.data && cachedResult.results) {
             return {
                 resultType: 'success',
+                fromType: 'cache',
                 id: widget.id,
                 name: widget.name,
                 data: cachedResult.data,
@@ -357,6 +358,7 @@ function wrapToSuccGen(context, widget) {
         }
         return {
             resultType: 'success',
+            fromType: 'normal',
             id: widget.id,
             name: widget.name,
             data,
