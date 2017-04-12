@@ -78,10 +78,10 @@ function* execute(context) {
     const mostImportantWidgets = legoUtils.widget.extractImportantWidgets(widgets);
     const otherWidgets = _.difference(widgets, mostImportantWidgets);
     const staticResources = exportStaticResources(legoConfig, widgets);
-    const stores = store.assemblyStore(legoConfig, mostImportantWidgets);
+    store.assemblyStore(legoConfig, mostImportantWidgets);
 
     const combineResults = yield {
-        important: renderMostImportantWidgets(context, mostImportantWidgets, stores),
+        important: renderMostImportantWidgets(context, mostImportantWidgets),
         other: renderOtherWidgets(context, otherWidgets)
     };
 
