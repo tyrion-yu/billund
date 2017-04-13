@@ -22,6 +22,7 @@ const KEY_REFRESH_COUNT = 'refreshCount';
 class VueSupportor extends BaseSupportor {
     constructor() {
         super();
+        this.storeConfig = null;
         /*
             为什么放在这里执行？因为后面两项方法都依赖store的初始化
          */
@@ -59,8 +60,7 @@ class VueSupportor extends BaseSupportor {
             return ret;
         }
 
-        this.store = new Vuex.Store({
-            state: initialState,
+        const storeConfig = this.storeConfig = {
             modules: buildInitialModules(),
             actions: {
                 [StateEnums.LEGO_ACTION_TYPE_REFRESH](context) {
@@ -72,7 +72,20 @@ class VueSupportor extends BaseSupportor {
                     state[KEY_REFRESH_COUNT]++;
                 }
             }
-        });
+        };
+
+        this.store = new Vuex.Store(Util.extend({}, storeConfig, {
+            state: initialState
+        }));
+        this.doSthTricky();
+    }
+
+    /**
+     * 替换原来的hotUpdate的实现,因为需要cache内容
+     */
+    doSthTricky() {
+        this.store.legoOriginalHotUpdate = this.store.hotUpdate;
+        this.store.hotUpdate = this.hotUpdate.bind(this);
     }
 
     /**
@@ -96,34 +109,32 @@ class VueSupportor extends BaseSupportor {
         if (!Util.isObject(newModule)) return;
 
         const moduleId = StateEnums.PREFIX_WIDGET_OWN_STATE_KEY + id;
-        // 不建议使用但是我还是用了,亲哥别改名啊
-        const modules = this.store['_options'].modules || {};
-        const hasPrevModule = !!(modules[moduleId]);
-        const prevModule = hasPrevModule ? modules[moduleId] : {};
+        const modules = this.storeConfig.modules || {};
+        const prevModule = modules[moduleId] ? modules[moduleId] : {};
 
         const moduleState = Util.extend({}, prevModule.state, newModule.state);
-        const moduleMutations = Util.extend({}, prevModule.mutations, newModule.mutations);
-        const moduleActions = Util.extend({}, prevModule.actions, newModule.actions);
-        // getters不能mixin,会默认摊平
-        const moduleGetters = newModule.getters || {};
-        newModule = {
+        /*
+            action,mutations,getter用来register的时候只要加新的
+            但是cache时需要拿完整的数据
+         */
+        const toInsertModule = {
             state: moduleState,
-            mutations: moduleMutations,
-            actions: moduleActions,
-            getters: moduleGetters
+            actions: newModule.actions,
+            mutations: newModule.mutations,
+            getters: newModule.getters
         };
-        if (hasPrevModule) {
-            // 如果之前已经有注册过,那么是hotUpdate
-            let prevModules = this.store.modules || {};
-            let newModules = Util.extend({}, prevModules, {
-                [moduleId]: newModule
-            });
-            this.store.hotUpdate({
-                modules: newModules
-            });
-        } else {
-            this.store.registerModule(moduleId, newModule);
-        }
+        const toStoredModule = {
+            state: moduleState,
+            actions: Util.extend({}, prevModule.mutations, newModule.mutations),
+            mutations: Util.extend({}, prevModule.mutations, newModule.mutations),
+            getters: Util.extend({}, prevModule.getters, newModule.getters)
+        };
+
+        this.storeConfig.modules = Util.extend({}, modules, {
+            [moduleId]: toStoredModule
+        });
+
+        this.store.registerModule(moduleId, toInsertModule);
     }
 
     /**
@@ -143,22 +154,40 @@ class VueSupportor extends BaseSupportor {
     hotUpdate(config) {
         if (!Util.isObject(config)) return;
 
-        const store = this.store;
-        const prevOptions = store['_options'] || {};
-        // 亲哥千万别改key啊...
+        const prevOptions = this.storeConfig || {};
         const prevActions = prevOptions.actions || {};
         const prevMutations = prevOptions.mutations || {};
+        const prevGetters = prevOptions.getters || {};
 
-        // mixin
+        // mixin,根节点的action和mutation与getters不可重复，module的允许重复
         const newActions = Util.extend({}, prevActions, config.actions);
         const newMutations = Util.extend({}, prevMutations, config.mutations);
-        // get不可以mixin
-        const newGetters = config.getters || {};
-        this.store.hotUpdate({
+        const newGetters = Util.extend({}, prevGetters, config.getters);
+
+        const newStoreConfig = {
             actions: newActions,
             mutations: newMutations,
             getters: newGetters
+        };
+
+        this.storeConfig = Util.extend({}, this.storeConfig, newStoreConfig);
+
+        /*
+            收集getters
+         */
+        const collectedGetters = {};
+        const modules = this.storeConfig.modules || {};
+        Object.keys(modules).forEach((moduleId) => {
+            const moduleInfo = modules[moduleId];
+            if (!(moduleInfo && moduleInfo.getters)) return true;
+
+            Util.extend(collectedGetters, moduleInfo.getters);
         });
+        Util.extend(collectedGetters, this.storeConfig.getters);
+
+        this.store.legoOriginalHotUpdate(Util.extend({}, newStoreConfig, {
+            getters: collectedGetters
+        }));
     }
 
     /**

@@ -59,7 +59,7 @@ class VueWidgetBridge extends BaseWidgetBridge {
         const props = Util.extend({}, tplProps, this.initialProps);
 
         // 这里可以尝试注册自己的module,module名称就是
-        this.store.registerModule(StateEnums.PREFIX_WIDGET_OWN_STATE_KEY + this.widgetId, {
+        this.supportor.registOwnModule(this.widgetId, {
             state: props,
             getters: {
                 [StateEnums.WIDGET_VUEX_GETTERS_PREFIX + self.widgetId](state, getters, rootState) {

@@ -546,13 +546,15 @@ var BaseWidgetBridge = function () {
      * @param {String} id - 组件id
      * @param {Object} store - redux的store
      * @param {Object} initialState - 初始的状态
+     * @param {Object} supportor - 支持组件
      */
-    function BaseWidgetBridge(id, store, initialState) {
+    function BaseWidgetBridge(id, store, initialState, supportor) {
         _classCallCheck(this, BaseWidgetBridge);
 
         this.widgetId = id;
         this.store = store;
         this.initialState = initialState;
+        this.supportor = supportor;
         // warpper element
         this.rootContainer = document.getElementById(id);
         if (!this.rootContainer) {
@@ -1548,7 +1550,7 @@ var BaseFESupportor = function () {
             // 这里需要确保store已经初始化
             var renderType = this.id2RenderTypeMapping[id] || RenderTypeEnums.RENDER_TYPE_REACT;
             var WidgetClass = renderType == RenderTypeEnums.RENDER_TYPE_VUE ? VueWidgetBridge : ReactWidgetBridge;
-            widgetBridge = new WidgetClass(id, this.store, this.initialState);
+            widgetBridge = new WidgetClass(id, this.store, this.initialState, this);
             this.widgetBridgeCache[id] = widgetBridge;
             return widgetBridge;
         }
@@ -3783,11 +3785,12 @@ var VueSupportor = function (_BaseSupportor) {
     function VueSupportor() {
         _classCallCheck(this, VueSupportor);
 
+        var _this = _possibleConstructorReturn(this, (VueSupportor.__proto__ || Object.getPrototypeOf(VueSupportor)).call(this));
+
+        _this.storeConfig = null;
         /*
             为什么放在这里执行？因为后面两项方法都依赖store的初始化
          */
-        var _this = _possibleConstructorReturn(this, (VueSupportor.__proto__ || Object.getPrototypeOf(VueSupportor)).call(this));
-
         _this.useVuex();
         _this.initStore();
         _this.parseWidgetConfigs();
@@ -3826,8 +3829,7 @@ var VueSupportor = function (_BaseSupportor) {
                 return ret;
             }
 
-            this.store = new Vuex.Store({
-                state: initialState,
+            var storeConfig = this.storeConfig = {
                 modules: buildInitialModules(),
                 actions: _defineProperty({}, StateEnums.LEGO_ACTION_TYPE_REFRESH, function (context) {
                     context.commit(StateEnums.LEGO_ACTION_TYPE_REFRESH);
@@ -3835,7 +3837,23 @@ var VueSupportor = function (_BaseSupportor) {
                 mutations: _defineProperty({}, StateEnums.LEGO_ACTION_TYPE_REFRESH, function (state) {
                     state[KEY_REFRESH_COUNT]++;
                 })
-            });
+            };
+
+            this.store = new Vuex.Store(Util.extend({}, storeConfig, {
+                state: initialState
+            }));
+            this.doSthTricky();
+        }
+
+        /**
+         * 替换原来的hotUpdate的实现,因为需要cache内容
+         */
+
+    }, {
+        key: 'doSthTricky',
+        value: function doSthTricky() {
+            this.store.legoOriginalHotUpdate = this.store.hotUpdate;
+            this.store.hotUpdate = this.hotUpdate.bind(this);
         }
 
         /**
@@ -3865,32 +3883,30 @@ var VueSupportor = function (_BaseSupportor) {
             if (!Util.isObject(newModule)) return;
 
             var moduleId = StateEnums.PREFIX_WIDGET_OWN_STATE_KEY + id;
-            // 不建议使用但是我还是用了,亲哥别改名啊
-            var modules = this.store['_options'].modules || {};
-            var hasPrevModule = !!modules[moduleId];
-            var prevModule = hasPrevModule ? modules[moduleId] : {};
+            var modules = this.storeConfig.modules || {};
+            var prevModule = modules[moduleId] ? modules[moduleId] : {};
 
             var moduleState = Util.extend({}, prevModule.state, newModule.state);
-            var moduleMutations = Util.extend({}, prevModule.mutations, newModule.mutations);
-            var moduleActions = Util.extend({}, prevModule.actions, newModule.actions);
-            // getters不能mixin,会默认摊平
-            var moduleGetters = newModule.getters || {};
-            newModule = {
+            /*
+                action,mutations,getter用来register的时候只要加新的
+                但是cache时需要拿完整的数据
+             */
+            var toInsertModule = {
                 state: moduleState,
-                mutations: moduleMutations,
-                actions: moduleActions,
-                getters: moduleGetters
+                actions: newModule.actions,
+                mutations: newModule.mutations,
+                getters: newModule.getters
             };
-            if (hasPrevModule) {
-                // 如果之前已经有注册过,那么是hotUpdate
-                var prevModules = this.store.modules || {};
-                var newModules = Util.extend({}, prevModules, _defineProperty({}, moduleId, newModule));
-                this.store.hotUpdate({
-                    modules: newModules
-                });
-            } else {
-                this.store.registerModule(moduleId, newModule);
-            }
+            var toStoredModule = {
+                state: moduleState,
+                actions: Util.extend({}, prevModule.mutations, newModule.mutations),
+                mutations: Util.extend({}, prevModule.mutations, newModule.mutations),
+                getters: Util.extend({}, prevModule.getters, newModule.getters)
+            };
+
+            this.storeConfig.modules = Util.extend({}, modules, _defineProperty({}, moduleId, toStoredModule));
+
+            this.store.registerModule(moduleId, toInsertModule);
         }
 
         /**
@@ -3916,22 +3932,47 @@ var VueSupportor = function (_BaseSupportor) {
         value: function hotUpdate(config) {
             if (!Util.isObject(config)) return;
 
-            var store = this.store;
-            var prevOptions = store['_options'] || {};
-            // 亲哥千万别改key啊...
+            var prevOptions = this.storeConfig || {};
             var prevActions = prevOptions.actions || {};
             var prevMutations = prevOptions.mutations || {};
+            var prevGetters = prevOptions.getters || {};
 
-            // mixin
+            // mixin,根节点的action和mutation不可重复，module的允许重复
             var newActions = Util.extend({}, prevActions, config.actions);
             var newMutations = Util.extend({}, prevMutations, config.mutations);
-            // get不可以mixin
-            var newGetters = config.getters || {};
-            this.store.hotUpdate({
+            var newGetters = Util.extend({}, prevGetters, config.getters);
+
+            var newStoreConfig = {
                 actions: newActions,
                 mutations: newMutations,
                 getters: newGetters
+            };
+
+            /*
+                getter不能mixin
+             */
+            if (config.getters) {
+                newStoreConfig.getters = config.getters;
+            }
+
+            this.storeConfig = Util.extend({}, this.storeConfig, newStoreConfig);
+
+            /*
+                收集getters
+             */
+            var collectedGetters = {};
+            var modules = this.storeConfig.modules || {};
+            Object.keys(modules).forEach(function (moduleId) {
+                var moduleInfo = modules[moduleId];
+                if (!(moduleInfo && moduleInfo.getters)) return true;
+
+                Util.extend(collectedGetters, moduleInfo.getters);
             });
+            Util.extend(collectedGetters, this.storeConfig.getters);
+
+            this.store.legoOriginalHotUpdate(Util.extend({}, newStoreConfig, {
+                getters: collectedGetters
+            }));
         }
 
         /**
@@ -4138,7 +4179,7 @@ var VueWidgetBridge = function (_BaseWidgetBridge) {
             var props = Util.extend({}, tplProps, this.initialProps);
 
             // 这里可以尝试注册自己的module,module名称就是
-            this.store.registerModule(StateEnums.PREFIX_WIDGET_OWN_STATE_KEY + this.widgetId, {
+            this.supportor.registOwnModule(this.widgetId, {
                 state: props,
                 getters: _defineProperty({}, StateEnums.WIDGET_VUEX_GETTERS_PREFIX + self.widgetId, function (state, getters, rootState) {
                     return self.mapStateToProps(rootState);

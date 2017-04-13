@@ -13,11 +13,13 @@ class BaseWidgetBridge {
      * @param {String} id - 组件id
      * @param {Object} store - redux的store
      * @param {Object} initialState - 初始的状态
+     * @param {Object} supportor - 支持组件
      */
-    constructor(id, store, initialState) {
+    constructor(id, store, initialState, supportor) {
         this.widgetId = id;
         this.store = store;
         this.initialState = initialState;
+        this.supportor = supportor;
         // warpper element
         this.rootContainer = document.getElementById(id);
         if (!this.rootContainer) {

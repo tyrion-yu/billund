@@ -477,7 +477,7 @@ class BaseFESupportor {
         // 这里需要确保store已经初始化
         let renderType = this.id2RenderTypeMapping[id] || RenderTypeEnums.RENDER_TYPE_REACT;
         const WidgetClass = renderType == RenderTypeEnums.RENDER_TYPE_VUE ? VueWidgetBridge : ReactWidgetBridge;
-        widgetBridge = new WidgetClass(id, this.store, this.initialState);
+        widgetBridge = new WidgetClass(id, this.store, this.initialState, this);
         this.widgetBridgeCache[id] = widgetBridge;
         return widgetBridge;
     }
