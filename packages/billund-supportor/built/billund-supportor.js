@@ -806,6 +806,7 @@ var BaseWidgetBridge = function () {
         key: 'registWidgetModule',
         value: function registWidgetModule(widgetModule) {
             this.template = widgetModule.template;
+            this.storeConfig = widgetModule.storeConfig;
             // 尝试启动
             this.shouldStart();
         }
@@ -886,13 +887,35 @@ function connectReactElement(widgetBridge) {
     if (!widgetBridge.store) return;
 
     if (!(widgetBridge.initialProps && widgetBridge.template)) return;
+
     //  使用闭包进行调用
     function mapStateToProps(state) {
         return widgetBridge.mapStateToProps.call(widgetBridge, state);
     }
-    //  传递给reactConnect进行包装
+
+    /**
+     * 连接store的一些配置
+     */
+    function connectStore() {
+        var storeConfig = widgetBridge.storeConfig;
+        if (!storeConfig) return;
+
+        var ownReducer = storeConfig.ownReducer;
+        if (ownReducer) {
+            widgetBridge.supportor.registOwnReducer(widgetBridge.widgetId, ownReducer);
+        }
+
+        if (storeConfig.mapStateToProps) {
+            widgetBridge.registMapStateToProps(storeConfig.mapStateToProps);
+        }
+    }
+    /*
+        1.先通过react-connect进行包装
+        2.关联store
+        3.与provider进行连接
+     */
     var connectedElement = ReactRedux.connect(mapStateToProps)(widgetBridge.template);
-    //  与Provider进行连接,并带有上下文
+    connectStore();
 
     ReactDom.render(React.createElement(ReactRedux.Provider, {
         store: widgetBridge.store,
@@ -957,6 +980,14 @@ function connectVueTemplateElement(widgetBridge) {
             return h('wrapped-element', {
                 props: props
             });
+        },
+        mounted: function mounted() {
+            var storeConfig = widgetBridge.storeConfig;
+            if (!storeConfig) return;
+            var supportor = widgetBridge.supportor;
+            if (!(supportor && supportor.registOwnModule)) return;
+
+            supportor.registOwnModule(this.legoWidgetId, storeConfig);
         }
     });
 }
@@ -3937,7 +3968,7 @@ var VueSupportor = function (_BaseSupportor) {
             var prevMutations = prevOptions.mutations || {};
             var prevGetters = prevOptions.getters || {};
 
-            // mixin,根节点的action和mutation不可重复，module的允许重复
+            // mixin,根节点的action和mutation与getters不可重复，module的允许重复
             var newActions = Util.extend({}, prevActions, config.actions);
             var newMutations = Util.extend({}, prevMutations, config.mutations);
             var newGetters = Util.extend({}, prevGetters, config.getters);
@@ -3947,13 +3978,6 @@ var VueSupportor = function (_BaseSupportor) {
                 mutations: newMutations,
                 getters: newGetters
             };
-
-            /*
-                getter不能mixin
-             */
-            if (config.getters) {
-                newStoreConfig.getters = config.getters;
-            }
 
             this.storeConfig = Util.extend({}, this.storeConfig, newStoreConfig);
 

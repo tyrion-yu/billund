@@ -231,6 +231,7 @@ class BaseWidgetBridge {
      */
     registWidgetModule(widgetModule) {
         this.template = widgetModule.template;
+        this.storeConfig = widgetModule.storeConfig;
         // 尝试启动
         this.shouldStart();
     }

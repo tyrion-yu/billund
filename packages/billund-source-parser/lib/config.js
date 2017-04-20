@@ -174,6 +174,39 @@ function updateTemplateInfo(source, properties, state) {
 }
 
 /**
+ * 在ast中更新store的信息
+ *
+ * @param  {String} source - 源代码
+ * @param  {Array} properties - 属性ast树
+ * @param  {Object} state - 状态对象
+ */
+function updateStoreConfig(source, properties, state) {
+    const storeProperty = properties.find((property) => {
+        return property.key.name === 'storeConfig';
+    });
+    if (!storeProperty) return;
+    /*
+        根据源码解析成ast树,寻找module.exports或者export default中的template,分为以下几种情况
+        1.是变量情况，不做处理直接返回
+        2.直接就是path.resolve的情况,那么执行，然后替换为require('./')
+        3.是'./template.jsx'的字符串情况,那么替换为require('./')
+     */
+    const value = storeProperty.value;
+    if (babelTypes.isIdentifier(value)) return;
+
+    let realPath = '';
+    if (babelTypes.isCallExpression(value)) {
+        realPath = source.substring(value.start, value.end).replace('__dirname', `'${state.dirname}'`);
+        realPath = eval(realPath);
+    } else if (babelTypes.isLiteral(value) || babelTypes.isStringLiteral(value)) {
+        realPath = value.value;
+    }
+    if (!realPath) throw new Error(`sorry,can't resolve template value:${value}`);
+
+    storeProperty.value = babelTypes.callExpression(babelTypes.identifier('require'), [babelTypes.stringLiteral(realPath)]);
+}
+
+/**
  * 修正配置中的模板信息
  *
  * @param  {String} source - 源代码
@@ -205,8 +238,41 @@ function correctTemplate(source, state) {
     return generate(ast, {}).code;
 }
 
+/**
+ * 修正配置中的模板信息
+ *
+ * @param  {String} source - 源代码
+ * @param  {Object} state - 状态对象,有如下几个字段:
+ * {
+ *     dirname: [String], // 对应文件所在的文件夹名称
+ * }
+ * @return {String}
+ */
+function correctStoreConfig(source, state) {
+    const ast = babylon.parse(source);
+    traverse(ast, {
+        MemberExpression(nodePath) {
+            const isModuleExports = nodePath.node.object.name == 'module' && nodePath.node.property.name == 'exports';
+            if (!isModuleExports) return;
+
+            const parentPath = nodePath.findParent((pa) => pa.isAssignmentExpression());
+            const exportsObj = parentPath.node.right;
+            if (!babelTypes.isObjectExpression(exportsObj)) throw new Error('sorry, please exports an object');
+
+            const properties = exportsObj.properties || [];
+            updateStoreConfig(source, properties, state);
+        },
+        ExportDefaultDeclaration(nodePath) {
+            const properties = nodePath.node.properties || [];
+            updateStoreConfig(source, properties, state);
+        }
+    });
+    return generate(ast, {}).code;
+}
+
 module.exports = {
     extractRequireAndExport,
     extractWidgetName,
-    correctTemplate
+    correctTemplate,
+    correctStoreConfig
 };
