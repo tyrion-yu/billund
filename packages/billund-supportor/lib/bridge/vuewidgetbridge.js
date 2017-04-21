@@ -45,7 +45,7 @@ class VueWidgetBridge extends BaseWidgetBridge {
 
         Object.keys(declareProps).forEach((propKey) => {
             const prop = declareProps[propKey];
-            if (!(Util.isObject(prop) && prop.default)) {
+            if (!(Util.isObject(prop) && prop.default !== undefined)) {
                 tplProps[propKey] = null;
                 return true;
             }
