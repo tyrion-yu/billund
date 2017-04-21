@@ -1,5 +1,7 @@
 ### Bug Fixes
 
+* **billund-supportor:** vue default props ([e674e3b](https://github.com/robinleej/billund/commit/e674e3b))
+
 * **packages/billund-framework/lib/server/render/lib/index.js:** move vue server-env config to index. ([5f03026](https://github.com/robinleej/billund/commit/5f03026))
 
 ### Features
