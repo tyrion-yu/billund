@@ -4189,7 +4189,7 @@ var VueWidgetBridge = function (_BaseWidgetBridge) {
 
             Object.keys(declareProps).forEach(function (propKey) {
                 var prop = declareProps[propKey];
-                if (!(Util.isObject(prop) && prop.default)) {
+                if (!(Util.isObject(prop) && prop.default !== undefined)) {
                     tplProps[propKey] = null;
                     return true;
                 }
