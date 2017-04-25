@@ -88,6 +88,7 @@ co(function*() {
     }));
 
     app.listen(8080);
+    console.log('listening 8080 server start!');
 }).catch((e) => {
     console.log(e.stack);
     app.context.logger.error(e.stack);

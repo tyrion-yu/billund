@@ -41,6 +41,7 @@ thumbs.db
 .svn
 .CVS
 .idea
+.happypack
 neurons/
 node_modules/
 jscoverage_lib/
