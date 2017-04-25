@@ -26,6 +26,21 @@ const DIST_PATH = resourceResolver.DIST_PATH;
 const env = process.env;
 
 const plugins = [
+    new webpack.LoaderOptionsPlugin({
+        options: {
+            postcss() {
+                // 处理css兼容性代码，无须再写-webkit之类的浏览器前缀
+                return [
+                    require('postcss-initial')({
+                        reset: 'all' // reset only inherited rules
+                    }),
+                    require('autoprefixer')({
+                        browsers: ['> 5%']
+                    })
+                ];
+            }
+        }
+    }),
     new webpack.optimize.CommonsChunkPlugin({
         name: 'common',
         filename: 'common.js',
@@ -196,7 +211,7 @@ module.exports = {
             use: [{
                 loader: 'babel-loader'
             }, {
-                loader: 'lego-action-loader',
+                loader: 'billund-action-loader',
                 options: {
                     widgetNameToPath: generateWidgetNameToPath()
                 }
@@ -207,7 +222,7 @@ module.exports = {
             use: [{
                 loader: 'babel-loader'
             }, {
-                loader: 'lego-config-loader',
+                loader: 'billund-config-loader',
                 options: {
                     include: 'static'
                 }

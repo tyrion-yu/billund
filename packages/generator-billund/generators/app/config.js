@@ -24,7 +24,7 @@ const pkgs = {
         'billund-framework': '^0.1.0',
         'billund-source-parser': '^0.1.0',
         'billund-supportor': '^0.1.0',
-        'billund-util': '^0.1.0',
+        'billund-utils': '^0.1.0',
         'babel-core': '^6.3.15',
         'babel-loader': '^6.2.0',
         'babel-plugin-add-module-exports': '^0.2.1',

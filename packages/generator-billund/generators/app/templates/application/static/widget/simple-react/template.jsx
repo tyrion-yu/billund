@@ -34,7 +34,7 @@ class ReactDemo extends Component {
             <div className="lego-test-section">
                 <div className="title">{title}</div>
                 <div className="desc">{desc}</div>
-                <div className="now">当前时间：{currentTime}</div>
+                <div className="now">timeStamp: {currentTime}</div>
             </div>
         );
     }

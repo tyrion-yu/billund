@@ -142,8 +142,47 @@ function extractStoreConfig(source, state) {
     return storeConfigStr;
 }
 
+/**
+ * 抓取代码中的静态资源内容
+ *
+ * @param  {String} source - 源代码
+ * @param  {Object} state - 状态对象,有如下几个字段:
+ * {
+ *    
+ * }
+ * @return {Array}
+ */
+function extractStaticResources(source, state) {
+    if (!source) return [];
+
+    const ast = babylon.parse(source);
+    const rets = [];
+    /*
+        目前做的简单一些,判断是带有entry字段的对象都进行打包
+        因为webpack外部还要进行判断
+        还需要进行调用unique，通过shadowequal
+     */
+    traverse(ast, {
+        ObjectExpression(path) {
+            const properties = path.node.properties || [];
+            const entryProperty = properties.find((property) => {
+                return property.key.name === 'entry';
+            });
+            if (!entryProperty) return;
+
+            const value = entryProperty.value.value;
+            if (rets.indexOf(value) != -1) return;
+
+            rets.push(value);
+        }
+    });
+
+    return rets;
+}
+
 module.exports = {
     extractWidgetInfos,
     extractActionPath,
-    extractStoreConfig
+    extractStoreConfig,
+    extractStaticResources
 };

@@ -55,7 +55,7 @@ function init(config) {
 
     _.extend(baseopt, config);
     // 自动增添组件
-    const renderPlugins = baseopt.renderPlugins;
+    const renderPlugins = baseopt.renderPlugins || {};
     const headerPlugins = DEFAULT_HEADER_PLUGINS.concat(renderPlugins.header || []);
     const bodyPlugins = DEFAULT_BODY_PLUGINS.concat(renderPlugins.body || []);
     baseopt.renderPlugins = {

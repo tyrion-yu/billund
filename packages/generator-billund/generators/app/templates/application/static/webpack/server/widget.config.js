@@ -78,7 +78,7 @@ module.exports = {
                     cacheDirectory: false
                 }
             }, {
-                loader: 'lego-config-loader'
+                loader: 'billund-config-loader'
             }]
         }, {
             test: /\.(jsx)$/,

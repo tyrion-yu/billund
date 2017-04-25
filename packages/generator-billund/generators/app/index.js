@@ -107,12 +107,6 @@ const Flow = yeoman.Base.extend({
         this.log(yosay(`Welcome to the sweet ${chalk.red(GENERATOR_NAME)} generator!`));
 
         const prompts = [{
-            name: 'boilerplate',
-            message: 'your project type',
-            type: 'list',
-            choices: [TEMPLATE_APPLICATION, TEMPLATE_WIDGET_REACT, TEMPLATE_WIDGET_VUE],
-            default: TEMPLATE_APPLICATION
-        }, {
             name: 'name',
             message: 'Your project name',
             default: path.basename(process.cwd())
@@ -163,22 +157,17 @@ const Flow = yeoman.Base.extend({
     },
     writing: {
         init() {
-            const map = {
-                [TEMPLATE_APPLICATION]: TEMPLATE_APPLICATION,
-                [TEMPLATE_WIDGET_REACT]: TEMPLATE_WIDGET_REACT,
-                [TEMPLATE_WIDGET_VUE]: TEMPLATE_WIDGET_VUE
-            };
-            this.currentDir = map[this.props.boilerplate] || TEMPLATE_APPLICATION;
+            // const map = {
+            //     [TEMPLATE_APPLICATION]: TEMPLATE_APPLICATION,
+            //     [TEMPLATE_WIDGET_REACT]: TEMPLATE_WIDGET_REACT,
+            //     [TEMPLATE_WIDGET_VUE]: TEMPLATE_WIDGET_VUE
+            // };
+            this.currentDir = TEMPLATE_APPLICATION;
         },
         'package_json': function() {
             const currentPkg = this.fs.readJSON(this.destinationPath('package.json'), {});
             currentPkg.version = this.props.version;
-            const allPkgJson = extend({}, {
-                [TEMPLATE_APPLICATION]: Config.APPLICATION_CONFIG,
-                [TEMPLATE_WIDGET_REACT]: Config.WIDGET_REACT_CONFIG,
-                [TEMPLATE_WIDGET_VUE]: Config.WIDGET_VUE_CONFIG
-            });
-            const selectedpkgJson = allPkgJson[this.props.boilerplate] || {};
+            const selectedpkgJson = extend({}, Config.APPLICATION_CONFIG);
 
             this.pkg = extend({
                 name: _.kebabCase(this.props.name),
@@ -224,7 +213,6 @@ const Flow = yeoman.Base.extend({
             this.fs.copy(this.templatePath('./' + this.currentDir + '/static') + '/eslintrc.json', this.destinationPath('./.eslintrc.json'));
             this.fs.copy(this.templatePath('./' + this.currentDir + '/static') + '/gitignore', this.destinationPath('./.gitignore'));
             this.fs.copy(this.templatePath('./' + this.currentDir + '/static') + '/npmignore', this.destinationPath('./.npmignore'));
-            this.fs.copy(this.templatePath('./' + this.currentDir + '/static') + '/npmrc', this.destinationPath('./.npmrc'));
             this.fs.copy(this.templatePath('./' + this.currentDir + '/static') + '/**/*.*', this.destinationPath('./'));
             this.fs.copyTpl(this.templatePath('./' + this.currentDir + '/tpl') + '/**/*.*', this.destinationPath('./'), {
                 PkgName: this.pkg.name,
@@ -232,13 +220,13 @@ const Flow = yeoman.Base.extend({
                 AppName: this.pkg.name,
                 AppNameCamel: camelCase(this.pkg.name)
             });
-        },
-        install() {
-            const opt = {
-                cwd: this.destinationPath('./')
-            };
-            this.spawnCommandSync('npm', ['install'], opt);
         }
+    },
+    install() {
+        const opt = {
+            cwd: this.destinationPath('./')
+        };
+        this.spawnCommandSync('npm', ['install'], opt);
     }
 });
 

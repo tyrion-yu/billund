@@ -4,6 +4,8 @@ const path = require('path');
 const co = require('co');
 const koa = require('koa');
 const Billund = require('billund-framework');
+const meta = require('./mods/renderplugins/meta/index.js');
+const staticResource = require('./mods/renderplugins/staticresource/index.js');
 
 const app = koa();
 const legoConfig = require('./package.json').legoconfig;
@@ -17,6 +19,9 @@ co(function*() {
         vendors: {
             react: '<%- PkgName %>/react.js',
             vue: '<%- PkgName %>/vue.js'
+        },
+        renderPlugins: {
+            header: [meta, staticResource]
         }
     }));
 
