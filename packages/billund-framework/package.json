@@ -1,6 +1,6 @@
 {
   "name": "billund-framework",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "description": "billund framework isomorphic",
   "browser": "./lib/browser/index.js",
   "main": "./lib/server/index.js",
