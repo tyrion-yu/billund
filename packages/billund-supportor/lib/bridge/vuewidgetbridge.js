@@ -29,31 +29,29 @@ class VueWidgetBridge extends BaseWidgetBridge {
      * 校验启动条件,满足条件就启动
      */
     shouldStart() {
-        // 已经启动了,就不要重复启动
         if (this.isStarted) return;
 
-        // props是否已经到达?
         if (!this.initialProps) return;
-        // 检查模板是否到达?
+
         const tpl = this.template;
         if (!tpl) return;
 
         const self = this;
-        // 因为vue的特性,所以我们还需要从模板里拿取props,拼接一下
+        /*
+            因为vue的特性，需要对存在的字段加入setter,getter,所以我们需要对那些不存在的字段做一个兼容
+         */
         const declareProps = tpl.props || {};
         const tplProps = {};
 
-        Object.keys(declareProps).forEach((propKey) => {
+        const defaultPropKeys = Util.isArray(declareProps) ? declareProps : Object.keys(declareProps);
+
+        defaultPropKeys.forEach((propKey) => {
             const prop = declareProps[propKey];
             if (!(Util.isObject(prop) && prop.default !== undefined)) {
                 tplProps[propKey] = null;
                 return true;
             }
-            let defaultProp = prop.default;
-            if (Util.isFunction(defaultProp)) {
-                defaultProp = defaultProp();
-            }
-            tplProps[propKey] = defaultProp;
+            tplProps[propKey] = undefined;
         });
 
         const props = Util.extend({}, tplProps, this.initialProps);

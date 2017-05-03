@@ -4173,31 +4173,29 @@ var VueWidgetBridge = function (_BaseWidgetBridge) {
     }, {
         key: 'shouldStart',
         value: function shouldStart() {
-            // 已经启动了,就不要重复启动
             if (this.isStarted) return;
 
-            // props是否已经到达?
             if (!this.initialProps) return;
-            // 检查模板是否到达?
+
             var tpl = this.template;
             if (!tpl) return;
 
             var self = this;
-            // 因为vue的特性,所以我们还需要从模板里拿取props,拼接一下
+            /*
+                因为vue的特性，需要对存在的字段加入setter,getter,所以我们需要对那些不存在的字段做一个兼容
+             */
             var declareProps = tpl.props || {};
             var tplProps = {};
 
-            Object.keys(declareProps).forEach(function (propKey) {
+            var defaultPropKeys = Util.isArray(declareProps) ? declareProps : Object.keys(declareProps);
+
+            defaultPropKeys.forEach(function (propKey) {
                 var prop = declareProps[propKey];
                 if (!(Util.isObject(prop) && prop.default !== undefined)) {
                     tplProps[propKey] = null;
                     return true;
                 }
-                var defaultProp = prop.default;
-                if (Util.isFunction(defaultProp)) {
-                    defaultProp = defaultProp();
-                }
-                tplProps[propKey] = defaultProp;
+                tplProps[propKey] = undefined;
             });
 
             var props = Util.extend({}, tplProps, this.initialProps);
