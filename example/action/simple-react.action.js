@@ -13,8 +13,7 @@ function* action() {
         }],
         options: {
             staticResources: [{
-                entry: 'billund-example/common.js',
-                styles: 'billund-example/common.css'
+                entry: 'billund-example/common.js'
             }, {
                 entry: 'billund-example/simple-react.js',
                 styles: 'billund-example/simple-react.css'

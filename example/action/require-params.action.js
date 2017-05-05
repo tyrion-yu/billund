@@ -14,8 +14,7 @@ function* action() {
         }],
         options: {
             staticResources: [{
-                entry: 'billund-example/common.js',
-                styles: 'billund-example/common.css'
+                entry: 'billund-example/common.js'
             }, {
                 entry: 'billund-example/require-params.js',
                 styles: 'billund-example/require-params.css'

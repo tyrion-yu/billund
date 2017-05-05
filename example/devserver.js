@@ -11,7 +11,7 @@ const serverConfig = require('./webpack/server/widget.config.js');
 const path = require('path');
 const co = require('co');
 const koa = require('koa');
-const Billund = require('billund-framework');
+const Billund = require('billund');
 const meta = require('./mods/renderplugins/meta/index.js');
 const staticResource = require('./mods/renderplugins/staticresource/index.js');
 
