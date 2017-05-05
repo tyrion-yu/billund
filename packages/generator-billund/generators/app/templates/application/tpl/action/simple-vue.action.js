@@ -13,8 +13,7 @@ function* action() {
         }],
         options: {
             staticResources: [{
-                entry: '<%- PkgName %>/common.js',
-                styles: '<%- PkgName %>/common.css'
+                entry: '<%- PkgName %>/common.js'
             }, {
                 entry: '<%- PkgName %>/simple-vue.js',
                 styles: '<%- PkgName %>/simple-vue.css'
