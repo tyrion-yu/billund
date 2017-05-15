@@ -44,17 +44,17 @@ billund是一个专注于界面渲染的同构化工具，同时支持了`React`
 
 如果您在使用过程或阅读过程中有任何不快的地方，欢迎[吐槽](https://github.com/robinleej/billund/issues)。
 
-* [安装](chapter1/README.md)
-* [介绍](chapter2/README.md)
-    * [项目结构](chapter2/project-config.md)
-    * [组件](chapter2/widget.md)
-    * [页面配置](chapter2/page.md)
-    * [webpack-loader](chapter2/loader.md)
-* [API文档](chapter3/README.md)
-    * [服务端](chapter3/server-api.md)
-    * [浏览器端](chapter3/browser-api.md)
-* [高级配置](chapter4/README.md)
-    * [renderPlugin](chapter4/renderplugin.md)
+* [安装](https://robinleej.gitbooks.io/billund-books/content/chapter1/)
+* [介绍](https://robinleej.gitbooks.io/billund-books/content/chapter2/)
+    * [项目结构](https://robinleej.gitbooks.io/billund-books/content/chapter2/project-config.html)
+    * [组件](https://robinleej.gitbooks.io/billund-books/content/chapter2/widget.html)
+    * [页面配置](https://robinleej.gitbooks.io/billund-books/content/chapter2/page.html)
+    * [webpack-loader](https://robinleej.gitbooks.io/billund-books/content/chapter2/loader.html)
+* [API文档](https://robinleej.gitbooks.io/billund-books/content/chapter3/)
+    * [服务端](https://robinleej.gitbooks.io/billund-books/content/chapter3/server-api.html)
+    * [浏览器端](https://robinleej.gitbooks.io/billund-books/content/chapter3/browser-api.html)
+* [高级配置](https://robinleej.gitbooks.io/billund-books/content/chapter4/)
+    * [renderPlugin](https://robinleej.gitbooks.io/billund-books/content/chapter4/renderplugin.html)
 
 ## 文档
 
