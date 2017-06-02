@@ -33,8 +33,11 @@ const widgetsPool = require('../../modules/widgetspool');
  * @throws {Error} - 当配置出现重复时会给出提示异常
  */
 function convertWidgets(widgetConfigs) {
-    widgetConfigs = widgetConfigs || [];
     const idCache = {}; // 记录id
+
+    widgetConfigs = widgetConfigs.filter((config) => {
+        return config && config.name;
+    });
 
     return widgetConfigs.map((config) => {
         /*

@@ -16,6 +16,13 @@ const Util = require('../util/index.js');
  */
 const KEY_REFRESH_COUNT = 'refreshCount';
 
+/*
+    注册api关联
+ */
+const API_ALIAS_CONFIG = {
+    registerOwnModule: 'registOwnModule'
+};
+
 /**
  * vue的前端支持组件
  */
@@ -37,6 +44,14 @@ class VueSupportor extends BaseSupportor {
 
     useVuex() {
         Vue.use(Vuex);
+    }
+
+    aliasApi() {
+        super.aliasApi();
+        Object.keys(API_ALIAS_CONFIG).forEach((newApi) => {
+            const apiName = API_ALIAS_CONFIG[newApi];
+            this[newApi] = this[apiName];
+        });
     }
 
     /**

@@ -1023,6 +1023,16 @@ var ReactWidgetBridge = __webpack_require__(16);
 var VueWidgetBridge = __webpack_require__(17);
 var Util = __webpack_require__(1);
 
+/*
+    注册api关联
+ */
+var API_ALIAS_CONFIG = {
+    registerMapStateToProps: 'registMapStateToProps',
+    registerOnStartListener: 'registOnStartListener',
+    registerOnFailListener: 'registOnFailListener',
+    registerOnChangeListener: 'registOnChangeListener'
+};
+
 /**
  * 基础的前端支持组件
  */
@@ -1077,17 +1087,29 @@ var BaseFESupportor = function () {
             self.tryTakeViewToFrontEnd();
             // 记录id与渲染类型的对应关系
             self.remId2RenderType();
+            // 关联api
+            self.aliasApi();
         }
 
         init();
     }
 
-    /**
-     * 挂载基本的中间件
-     */
-
-
     _createClass(BaseFESupportor, [{
+        key: 'aliasApi',
+        value: function aliasApi() {
+            var _this = this;
+
+            Object.keys(API_ALIAS_CONFIG).forEach(function (newApi) {
+                var apiName = API_ALIAS_CONFIG[newApi];
+                _this[newApi] = _this[apiName];
+            });
+        }
+
+        /**
+         * 挂载基本的中间件
+         */
+
+    }, {
         key: 'registBaseMiddlewares',
         value: function registBaseMiddlewares() {
             var self = this;
@@ -1116,11 +1138,11 @@ var BaseFESupportor = function () {
     }, {
         key: 'remId2RenderType',
         value: function remId2RenderType() {
-            var _this = this;
+            var _this2 = this;
 
             var configs = window[WidgetEnums.WIDGET_CONFIGS] || [];
             configs.forEach(function (config) {
-                _this.id2RenderTypeMapping[config.id] = config.renderType;
+                _this2.id2RenderTypeMapping[config.id] = config.renderType;
             });
         }
 
@@ -1131,7 +1153,7 @@ var BaseFESupportor = function () {
     }, {
         key: 'tryTakeViewToFrontEnd',
         value: function tryTakeViewToFrontEnd() {
-            var _this2 = this;
+            var _this3 = this;
 
             var self = this;
             /**
@@ -1147,7 +1169,7 @@ var BaseFESupportor = function () {
             extractImportantWidgets();
             // 兜底,如果3000ms后还没有启动
             window.setTimeout(function () {
-                _this2.takeViewToFrontEnd();
+                _this3.takeViewToFrontEnd();
             }, 3000);
         }
 
@@ -1256,10 +1278,10 @@ var BaseFESupportor = function () {
     }, {
         key: 'tryDoSthDependentOnContext',
         value: function tryDoSthDependentOnContext() {
-            var _this3 = this;
+            var _this4 = this;
 
             window.setTimeout(function () {
-                var processedByMe = _this3.doSthDependentOnContext();
+                var processedByMe = _this4.doSthDependentOnContext();
                 if (processedByMe) {
                     console.warn('passing 1000ms without call useContextPreProcessor,so run directly.maybe you should regist a context pre-processor');
                 }
@@ -1401,7 +1423,7 @@ var BaseFESupportor = function () {
     }, {
         key: 'traversalFallWidgets',
         value: function traversalFallWidgets() {
-            var _this4 = this;
+            var _this5 = this;
 
             /*
                 尝试遍历过滤失败的模块，满足以下两个条件的才能运行
@@ -1410,17 +1432,17 @@ var BaseFESupportor = function () {
              */
             this.fallbackWidgets = this.fallbackWidgets.filter(function (widget) {
                 var name = widget.name;
-                var widgetModule = _this4.name2WidgetModules[name];
+                var widgetModule = _this5.name2WidgetModules[name];
                 if (!widgetModule) return true;
 
                 var requireParams = widget.fallbackParams;
-                var params = Util.extend({}, widget.params, _this4.collectedParams);
-                var meetRequireParams = _this4.isMeetRequireParams(params, requireParams);
+                var params = Util.extend({}, widget.params, _this5.collectedParams);
+                var meetRequireParams = _this5.isMeetRequireParams(params, requireParams);
                 if (!meetRequireParams) return true;
 
-                _this4.executeWidget(widget.id, widgetModule, params).then(function () {
+                _this5.executeWidget(widget.id, widgetModule, params).then(function () {
                     // 尝试去将页面放入前端
-                    _this4.shouldTakeViewToFrontEnd(widget.id);
+                    _this5.shouldTakeViewToFrontEnd(widget.id);
                 });
             });
         }
@@ -3495,6 +3517,8 @@ arrayFind();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -3512,6 +3536,13 @@ var Enums = __webpack_require__(0);
 var StateEnums = Enums.state;
 var SupportorEnums = Enums.supportor;
 var Util = __webpack_require__(1);
+
+/*
+    注册api关联
+ */
+var API_ALIAS_CONFIG = {
+    registerOwnReducer: 'registOwnReducer'
+};
 
 /**
  * 默认的reducer,什么都不处理直接返回
@@ -3559,12 +3590,23 @@ var ReactSupportor = function (_BaseSupportor) {
         return _this;
     }
 
-    /**
-     * 注入lego的widgetId
-     */
-
-
     _createClass(ReactSupportor, [{
+        key: 'aliasApi',
+        value: function aliasApi() {
+            var _this2 = this;
+
+            _get(ReactSupportor.prototype.__proto__ || Object.getPrototypeOf(ReactSupportor.prototype), 'aliasApi', this).call(this);
+            Object.keys(API_ALIAS_CONFIG).forEach(function (newApi) {
+                var apiName = API_ALIAS_CONFIG[newApi];
+                _this2[newApi] = _this2[apiName];
+            });
+        }
+
+        /**
+         * 注入lego的widgetId
+         */
+
+    }, {
         key: 'injectLegoWidgetId',
         value: function injectLegoWidgetId() {
             var Provider = ReactRedux.Provider;
@@ -3782,6 +3824,8 @@ module.exports = ReactSupportor;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3805,6 +3849,13 @@ var Util = __webpack_require__(1);
    以防有漏过什么事件
  */
 var KEY_REFRESH_COUNT = 'refreshCount';
+
+/*
+    注册api关联
+ */
+var API_ALIAS_CONFIG = {
+    registerOwnModule: 'registOwnModule'
+};
 
 /**
  * vue的前端支持组件
@@ -3836,6 +3887,17 @@ var VueSupportor = function (_BaseSupportor) {
         key: 'useVuex',
         value: function useVuex() {
             Vue.use(Vuex);
+        }
+    }, {
+        key: 'aliasApi',
+        value: function aliasApi() {
+            var _this2 = this;
+
+            _get(VueSupportor.prototype.__proto__ || Object.getPrototypeOf(VueSupportor.prototype), 'aliasApi', this).call(this);
+            Object.keys(API_ALIAS_CONFIG).forEach(function (newApi) {
+                var apiName = API_ALIAS_CONFIG[newApi];
+                _this2[newApi] = _this2[apiName];
+            });
         }
 
         /**

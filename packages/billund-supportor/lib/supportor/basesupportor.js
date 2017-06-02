@@ -18,6 +18,16 @@ const ReactWidgetBridge = require('../bridge/reactwidgetbridge');
 const VueWidgetBridge = require('../bridge/vuewidgetbridge');
 const Util = require('../util/index.js');
 
+/*
+    注册api关联
+ */
+const API_ALIAS_CONFIG = {
+    registerMapStateToProps: 'registMapStateToProps',
+    registerOnStartListener: 'registOnStartListener',
+    registerOnFailListener: 'registOnFailListener',
+    registerOnChangeListener: 'registOnChangeListener'
+};
+
 /**
  * 基础的前端支持组件
  */
@@ -69,9 +79,18 @@ class BaseFESupportor {
             self.tryTakeViewToFrontEnd();
             // 记录id与渲染类型的对应关系
             self.remId2RenderType();
+            // 关联api
+            self.aliasApi();
         }
 
         init();
+    }
+
+    aliasApi() {
+        Object.keys(API_ALIAS_CONFIG).forEach((newApi) => {
+            const apiName = API_ALIAS_CONFIG[newApi];
+            this[newApi] = this[apiName];
+        });
     }
 
     /**

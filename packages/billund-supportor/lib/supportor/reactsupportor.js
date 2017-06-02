@@ -10,6 +10,13 @@ const StateEnums = Enums.state;
 const SupportorEnums = Enums.supportor;
 const Util = require('../util/index.js');
 
+/*
+    注册api关联
+ */
+const API_ALIAS_CONFIG = {
+    registerOwnReducer: 'registOwnReducer'
+};
+
 /**
  * 默认的reducer,什么都不处理直接返回
  *
@@ -49,6 +56,14 @@ class ReactSupportor extends BaseSupportor {
         this.initExtraFunctions();
 
         this.tryDoSthDependentOnContext();
+    }
+
+    aliasApi() {
+        super.aliasApi();
+        Object.keys(API_ALIAS_CONFIG).forEach((newApi) => {
+            const apiName = API_ALIAS_CONFIG[newApi];
+            this[newApi] = this[apiName];
+        });
     }
 
     /**
