@@ -1,6 +1,6 @@
 {
   "name": "billund",
-  "version": "0.1.28",
+  "version": "1.0.0-alpha.1",
   "description": "billund framework isomorphic",
   "browser": "./lib/browser/index.js",
   "main": "./lib/server/index.js",
@@ -10,8 +10,8 @@
     "isomorphic"
   ],
   "dependencies": {
-    "billund-framework": "^0.1.28",
-    "billund-supportor": "^0.1.28"
+    "billund-framework": "^1.0.0-alpha.1",
+    "billund-supportor": "^1.0.0-alpha.1"
   },
   "author": "robin.li",
   "license": "MIT"
