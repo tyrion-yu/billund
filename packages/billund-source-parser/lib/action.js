@@ -58,20 +58,35 @@ function extractWidgetInfos(source, state) {
  * 从properties中抓取actionPath的值
  *
  * @param  {Array} properties - 属性队列
- * @return {String}
+ * @return {Array}
  */
 function extractActionPathFromProperties(properties) {
     const urlProperty = properties.find((property) => {
         return property.key.name === 'url';
     });
-    if (!urlProperty) return '';
-
+    if (!urlProperty) return [];
     /*
-        目前只支持export出来的对象中,name对应的value是一个字符串常量
+        目前对value有多种类型支持
+        1: String
+        2: Array
      */
     const value = urlProperty.value;
-    if (!(babelTypes.isLiteral(value) || babelTypes.isStringLiteral(value))) return '';
-    return value.value;
+    const isStringValue = babelTypes.isLiteral(value) || babelTypes.isStringLiteral(value);
+    const isArrayValue = babelTypes.isArrayExpression(value);
+    if (!(isStringValue || isArrayValue)) return [];
+
+    if (isStringValue) {
+        return [value.value];
+    } else {
+        return (value.elements || []).map((element) => {
+            if (!element) return '';
+            if (!(babelTypes.isLiteral(element) || babelTypes.isStringLiteral(element))) return '';
+
+            return element.value;
+        }).filter((val) => {
+            return !!val;
+        });
+    }
 }
 
 /**
@@ -82,13 +97,13 @@ function extractActionPathFromProperties(properties) {
  * {
  *
  * }
- * @return {String}
+ * @return {Array}
  */
 function extractActionPath(source, state) {
     if (!source) return '';
 
     const ast = babylon.parse(source);
-    let actionPath = '';
+    let actionPath = [];
     traverse(ast, {
         MemberExpression(nodePath) {
             const isModuleExports = nodePath.node.object.name == 'module' && nodePath.node.property.name == 'exports';
