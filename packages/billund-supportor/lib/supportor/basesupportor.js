@@ -98,7 +98,7 @@ class BaseFESupportor {
      */
     registBaseMiddlewares() {
         const self = this;
-        this.context = Cookies;
+        this.cookies = Cookies;
 
         function querystring() {
             const search = window.location.search || '';
