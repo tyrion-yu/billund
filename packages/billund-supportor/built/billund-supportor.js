@@ -1113,7 +1113,7 @@ var BaseFESupportor = function () {
         key: 'registBaseMiddlewares',
         value: function registBaseMiddlewares() {
             var self = this;
-            this.context = Cookies;
+            this.cookies = Cookies;
 
             function querystring() {
                 var search = window.location.search || '';
@@ -1412,8 +1412,7 @@ var BaseFESupportor = function () {
             var widgetBridge = this.getWidgetBridgeById(config.id);
             if (!widgetBridge) return;
 
-            var props = Util.isObject(config.props) ? config.props : {};
-            widgetBridge.initProps(props);
+            widgetBridge.initProps(config.props);
         }
 
         /**

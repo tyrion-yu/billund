@@ -346,8 +346,7 @@ class BaseFESupportor {
         const widgetBridge = this.getWidgetBridgeById(config.id);
         if (!widgetBridge) return;
 
-        const props = Util.isObject(config.props) ? config.props : {};
-        widgetBridge.initProps(props);
+        widgetBridge.initProps(config.props);
     }
 
     /**
