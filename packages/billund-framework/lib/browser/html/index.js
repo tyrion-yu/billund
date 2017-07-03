@@ -16,28 +16,23 @@ const isDev = (process.env.LEGO_ENV === 'development' || process.env.BILLUND_ENV
  */
 const baseMetaPlugin = require('./renderplugins/basemeta/index.js');
 const pageTitlePlugin = require('./renderplugins/pagetitle/index.js');
-const iosFixedStylePlugin = require('./renderplugins/iosfixedstyle/index.js');
-const DEFAULT_HEADER_PLUGINS = [baseMetaPlugin, pageTitlePlugin, iosFixedStylePlugin];
+const DEFAULT_HEADER_PLUGINS = [baseMetaPlugin, pageTitlePlugin];
 
 const widgetContentPlugin = require('./renderplugins/widgetcontents/index.js');
 const initialStatePlugin = require('./renderplugins/initialstate/index.js');
+const iosFixedStylePlugin = require('./renderplugins/iosfixedstyle/index.js');
 const mostImportantWidgetsTagPlugin = require('./renderplugins/mostimportantwidgetstag/index.js');
 const widgetConfigsPlugin = require('./renderplugins/widgetconfigs/index.js');
 const widgetPropsPlugin = require('./renderplugins/widgetprops/index.js');
-const backAutoRefreshPlugin = require('./renderplugins/backautorefresh/index.js');
 const DEFAULT_BODY_PLUGINS = [
     widgetContentPlugin,
     initialStatePlugin,
+    iosFixedStylePlugin,
     mostImportantWidgetsTagPlugin,
     widgetConfigsPlugin,
-    widgetPropsPlugin,
-    backAutoRefreshPlugin
+    widgetPropsPlugin
 ];
 
-const widgetCaches = require('lru-cache')({
-    max: 1000,
-    maxAge: 1000 * 60 * 60
-});
 const baseopt = {};
 
 /**
@@ -45,13 +40,10 @@ const baseopt = {};
  *
  * @param  {Object} config - 配置对象:
  * {
- *      vendors: [Object], // dll文件的路径(取决于你自己的解析方式),一般会有react|vue两个字段
  *      renderPlugins: [Object] // 渲染插件,一般会有header和body两个字段,对应不同的位置
  * }
  */
 function init(config) {
-    if (!(config && config.vendors)) throw new Error('missing vendors for billund');
-
     _.extend(baseopt, config);
     // 自动增添组件
     const renderPlugins = baseopt.renderPlugins || {};
@@ -74,10 +66,9 @@ function* execute(context) {
         进行一些基本的准备工作,例如区分核心非核心模块，自动填充静态资源，创建store等
      */
     const widgets = widgetUtil.convertWidgets(legoConfig.widgets || []);
+    
     const mostImportantWidgets = legoUtils.widget.extractImportantWidgets(widgets);
     const otherWidgets = _.difference(widgets, mostImportantWidgets);
-    const staticResources = exportStaticResources(legoConfig, widgets);
-    store.assemblyStore(legoConfig, mostImportantWidgets);
 
     const combineResults = yield {
         important: renderMostImportantWidgets(context, mostImportantWidgets),
@@ -95,7 +86,6 @@ function* execute(context) {
             success: _.values(successWidgets),
             fail: _.values(failWidgets)
         },
-        staticResources,
         options: legoConfig.options
     };
     /*
@@ -164,32 +154,6 @@ function* execute(context) {
         <body>${bodyResults.join('')}</body>
     </html>
     `;
-}
-
-/**
- * 输出静态资源列表
- *
- * @param {Object} config - 对应lego的配置
- * @param {Array}  widgets - widget列表
- * @return {Array}
- */
-function exportStaticResources(config, widgets) {
-    const options = config.options || {};
-    const ret = options.staticResources || [];
-    const vendors = baseopt.vendors;
-
-    const renderTypeCountMap = widgetUtil.addupRenderTypeCount(widgets);
-    if (renderTypeCountMap.react > 0) {
-        ret.unshift({
-            entry: vendors.react
-        });
-    }
-    if (renderTypeCountMap.vue > 0) {
-        ret.unshift({
-            entry: vendors.vue
-        });
-    }
-    return ret;
 }
 
 /**
