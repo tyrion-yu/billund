@@ -68,11 +68,25 @@ function convertWidgets(widgetConfigs) {
         config.id = id;
         config.params = config.params || {};
         idCache[id] = true;
-        // 接着,从widgetRegister中拿取真实的组件内容
-        let widget = widgetsPool.getWidgetByName(config.name);
+        /*
+            引入组件的方式分为两种
+            1.动态引入
+            2.从组件池中引入
+         */
+        const isDynamicImport = !!config.dynamicImportPath;
+        let widget = null;
+        try {
+            widget = isDynamicImport ? require(config.dynamicImportPath) : widgetsPool.getWidgetByName(config.name);
+        } catch (e) {
+            console.error(e);
+        }
+
         if (!(widget && _.isObject(widget))) {
-            // 没有获取到对应的widget,那么提出报错
-            throw new Error(`Invalid widget configs!Widget\'s name is ${config.name}`);
+            // 没有获取到对应的widget,那么提示错误
+            console.error(`Invalid widget configs!Widget\'s name is ${config.name}`);
+            widget = {
+                renderType: RENDER_TYPE.RENDER_TYPE_VUE
+            };
         }
 
         return _.extend(config, widget);
