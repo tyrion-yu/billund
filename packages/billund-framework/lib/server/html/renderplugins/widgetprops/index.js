@@ -24,8 +24,10 @@ module.exports = function*(config) {
     const successWidgetsScripts = successWidgets.map((widget) => {
         const id = widget.id;
         const data = widget.result.result.data || {};
+        const meta = widget.result.result.meta || {};
         const unsafeStr = JSON.stringify({
             id,
+            meta,
             props: data
         });
         const safeStr = encodeURIComponent(unsafeStr);

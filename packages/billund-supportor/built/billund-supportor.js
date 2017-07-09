@@ -1001,6 +1001,8 @@ module.exports = render;
 "use strict";
 
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1399,6 +1401,7 @@ var BaseFESupportor = function () {
          * @param  {Object} config - 目前字段如下:
          * {
          *      id: [String],// widget的id,
+         *      meta: [Object], // widget的元数据信息
          *      props: [Object]// widget的props
          * }
          */
@@ -1412,7 +1415,7 @@ var BaseFESupportor = function () {
             var widgetBridge = this.getWidgetBridgeById(config.id);
             if (!widgetBridge) return;
 
-            widgetBridge.initProps(config.props);
+            widgetBridge.initProps(_extends({}, config.meta, config.props));
         }
 
         /**
@@ -1439,7 +1442,7 @@ var BaseFESupportor = function () {
                 var meetRequireParams = _this5.isMeetRequireParams(params, requireParams);
                 if (!meetRequireParams) return true;
 
-                _this5.executeWidget(widget.id, widgetModule, params).then(function () {
+                _this5.executeWidget(widget.id, widgetModule, params, widget.meta).then(function () {
                     // 尝试去将页面放入前端
                     _this5.shouldTakeViewToFrontEnd(widget.id);
                 });
@@ -1487,12 +1490,13 @@ var BaseFESupportor = function () {
          * @param  {String} id - 当在页面上时的widgetId
          * @param  {Object} widgetModule - widget的module内容
          * @param  {Object} params - 参数
+         * @param  {Object} meta - 组件的元数据
          * @return {Promise}
          */
 
     }, {
         key: 'executeWidget',
-        value: function executeWidget(id, widgetModule, params) {
+        value: function executeWidget(id, widgetModule, params, meta) {
             params = params || {};
             /*
                 判断有没有dataGenerator
@@ -1526,6 +1530,7 @@ var BaseFESupportor = function () {
                                 window.setTimeout(function () {
                                     self.parseWidgetProp({
                                         id: id,
+                                        meta: meta,
                                         props: props
                                     });
                                 }, 5);
