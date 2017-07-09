@@ -327,7 +327,7 @@ function wrapToSuccGen(context, widget) {
         let computedServerCacheKey = '';
         try {
             if (shouldUseCache) {
-                computedServerCacheKey = `widgetName:${widget.name}|cacheKey:${widget.serverCacheKey(widget.params)}`;
+                computedServerCacheKey = `widgetName:${widget.name}|cacheKey:${widget.serverCacheKey(widget.params, widget.meta)}`;
             }
         } catch (e) {
             console.warm(`compute serverCacheKey error:${e.stack}`);
@@ -340,6 +340,7 @@ function wrapToSuccGen(context, widget) {
                 fromType: 'cache',
                 id: widget.id,
                 name: widget.name,
+                meta: cachedResult.meta,
                 data: cachedResult.data,
                 results: cachedResult.results
             };
@@ -347,11 +348,16 @@ function wrapToSuccGen(context, widget) {
 
         // 先执行数据方法,把数据上下文传入
         const dataGen = widget.dataGenerator.call(context, params);
+        const meta = widget.meta || {};
         const data = yield dataGen;
-        const results = yield render(widget, data);
+        /*
+            meta与data一起进行用以渲染，data的优先级更高
+         */
+        const results = yield render(widget, Object.assign({}, meta, data));
 
         if (computedServerCacheKey) {
             widgetCaches.set(computedServerCacheKey, {
+                meta: widget.meta,
                 data,
                 results
             });
@@ -361,6 +367,7 @@ function wrapToSuccGen(context, widget) {
             fromType: 'normal',
             id: widget.id,
             name: widget.name,
+            meta,
             data,
             results
         };
@@ -386,6 +393,7 @@ function wrapToFailGen(widget) {
             resultType: 'fallback',
             id: widget.id,
             name: widget.name,
+            meta: widget.meta || {},
             params: retParams,
             fallbackParams: widget.paramMiss || []
         };

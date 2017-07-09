@@ -336,6 +336,7 @@ class BaseFESupportor {
      * @param  {Object} config - 目前字段如下:
      * {
      *      id: [String],// widget的id,
+     *      meta: [Object], // widget的元数据信息
      *      props: [Object]// widget的props
      * }
      */
@@ -346,7 +347,7 @@ class BaseFESupportor {
         const widgetBridge = this.getWidgetBridgeById(config.id);
         if (!widgetBridge) return;
 
-        widgetBridge.initProps(config.props);
+        widgetBridge.initProps(Object.assign({}, config.meta, config.props));
     }
 
     /**
@@ -369,7 +370,7 @@ class BaseFESupportor {
             const meetRequireParams = this.isMeetRequireParams(params, requireParams);
             if (!meetRequireParams) return true;
 
-            this.executeWidget(widget.id, widgetModule, params).then(() => {
+            this.executeWidget(widget.id, widgetModule, params, widget.meta).then(() => {
                 // 尝试去将页面放入前端
                 this.shouldTakeViewToFrontEnd(widget.id);
             });
@@ -414,9 +415,10 @@ class BaseFESupportor {
      * @param  {String} id - 当在页面上时的widgetId
      * @param  {Object} widgetModule - widget的module内容
      * @param  {Object} params - 参数
+     * @param  {Object} meta - 组件的元数据
      * @return {Promise}
      */
-    executeWidget(id, widgetModule, params) {
+    executeWidget(id, widgetModule, params, meta) {
         params = params || {};
         /*
             判断有没有dataGenerator
@@ -435,6 +437,7 @@ class BaseFESupportor {
             window.setTimeout(() => {
                 self.parseWidgetProp({
                     id,
+                    meta,
                     props
                 });
             }, 5);
