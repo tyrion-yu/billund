@@ -46,7 +46,10 @@ function isCorrectWidget(widget) {
  * }
  */
 function bindWidgets(config) {
-    if (!(config && config.widgetDir)) throw new Error('missing widgetDir config in lego framework');
+    if (!(config && config.widgetDir)) {
+        console.warn('missing widgetDir config in lego framework');
+        return;
+    }
 
     const widgets = legoUtils.common.getFilteredFiles(config.widgetDir, {
         nameRegex: config.nameRegex
