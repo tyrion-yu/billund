@@ -108,7 +108,9 @@ module.exports = function*(config) {
         });
         return createWidgetGroup(results, hasSuccessSub);
     });
+
+    const shouldHidden = (!config.allowShowEvenFailed) && (mostImportantWidgets.length > successWidgets.length);
     return {
-        result: createMainPage(widgetGroupArr.join(''), mostImportantWidgets.length > successWidgets.length)
+        result: createMainPage(widgetGroupArr.join(''), shouldHidden)
     };
 };
