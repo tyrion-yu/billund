@@ -89,6 +89,7 @@ function* execute(context) {
     const failWidgets = _.extend(combineResults.important.failWidgets, combineResults.other);
 
     const pluginConfig = {
+        allowShowEvenFailed: !!legoConfig.allowShowEvenFailed,
         storeData: legoConfig.storeData || {},
         widgets,
         mostImportantWidgets,
