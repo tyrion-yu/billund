@@ -1,5 +1,6 @@
 'use strict';
 
+const Cat = require('@dp/cat-client');
 const isDev = (process.env.LEGO_ENV === 'development' || process.env.BILLUND_ENV === 'development');
 
 const _ = require('lodash');
@@ -29,16 +30,24 @@ function* render(widget, data) {
     // 判断是否是合理的数据类型
     isValidProps(data) || (data = {});
 
+    const transaction = Cat.newTransaction('createProvider', widget.name);
     const provider = createProvider(vueConfig, data, widget.store);
+    transaction.setStatus(Cat.STATUS.SUCCESS);
+    transaction.complete();
 
     return yield new Promise((resolve, reject) => {
+        const renderTransaction = Cat.newTransaction('renderToString', widget.name);
         renderer.renderToString(provider, (error, html) => {
             if (error) {
                 console.error(`id:${widget.id},name:${widget.name} render error!
                                 ${error.stack}`);
                 reject(error);
+                renderTransaction.setStatus(Cat.STATUS.FAIL);
+                renderTransaction.complete();
                 return;
             }
+            renderTransaction.setStatus(Cat.STATUS.SUCCESS);
+            renderTransaction.complete();
             resolve(html);
         });
     });
