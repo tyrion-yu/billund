@@ -14,12 +14,13 @@
     "eslint": "^1.10.3"
   },
   "dependencies": {
+    "@dp/cat-client": "^1.4.10",
+    "billund-enums": "^1.0.0-alpha.14",
+    "billund-utils": "^1.0.0-alpha.14",
     "co": "^4.6.0",
     "debug": "^2.3.3",
     "decache": "^4.1.0",
     "koa-router": "^5.2.3",
-    "billund-enums": "^1.0.0-alpha.14",
-    "billund-utils": "^1.0.0-alpha.14",
     "lodash": "^4.15.0",
     "lru-cache": "^4.0.1"
   },
