@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
+const Cat = require('@dp/cat-client');
 
 const legoUtils = require('billund-utils');
 
@@ -80,10 +81,13 @@ function* execute(context) {
     const staticResources = exportStaticResources(legoConfig, widgets);
     store.assemblyStore(legoConfig, mostImportantWidgets);
 
+    const transaction = Cat.newTransaction('total-render', context.url);
     const combineResults = yield {
         important: renderMostImportantWidgets(context, mostImportantWidgets),
         other: renderOtherWidgets(context, otherWidgets)
     };
+    transaction.setStatus(Cat.STATUS.SUCCESS);
+    transaction.complete();
 
     const successWidgets = combineResults.important.successWidgets;
     const failWidgets = _.extend(combineResults.important.failWidgets, combineResults.other);
@@ -354,7 +358,11 @@ function wrapToSuccGen(context, widget) {
         /*
             meta与data一起进行用以渲染，data的优先级更高
          */
+
+        const transaction = Cat.newTransaction('widget-render', widget.name);
         const results = yield render(widget, Object.assign({}, meta, data));
+        transaction.setStatus(Cat.STATUS.SUCCESS);
+        transaction.complete();
 
         if (computedServerCacheKey) {
             widgetCaches.set(computedServerCacheKey, {
