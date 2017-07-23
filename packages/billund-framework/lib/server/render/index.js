@@ -1,6 +1,8 @@
 'use strict';
 
 const RENDER_TYPE = require('billund-enums').renderType;
+let vueRender = null;
+let reactRender = null;
 
 /**
  * 一些预处理方法
@@ -22,10 +24,14 @@ doInit();
 function* render(widget, data) {
     const renderType = widget.renderType;
     if (renderType == RENDER_TYPE.RENDER_TYPE_VUE) {
-        const vueRender = require('./lib/vue.js');
+        if (!vueRender) {
+            vueRender = require('./lib/vue.js');
+        }
         return yield vueRender(widget, data);
     }
-    const reactRender = require('./lib/react.js');
+    if (!reactRender) {
+        reactRender = require('./lib/react.js');
+    }
     return reactRender(widget, data);
 }
 
