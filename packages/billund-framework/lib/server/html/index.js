@@ -240,7 +240,7 @@ function buildWidgetTasks(context, widgets, mustFail) {
         function* fn() {
             const paramMiss = pickoutMissParam(widget.params, widget.requireParams);
             widget.paramMiss = paramMiss;
-            const meetCon = (!mustFail) && !(paramMiss && paramMiss.length);
+            const meetCon = (!mustFail) && (!widget.mustFail) && !(paramMiss && paramMiss.length);
             // 根据结果来进行判断如何执行
             const genFn = meetCon ? wrapToSuccGen(context, widget) : wrapToFailGen(widget);
             let ret = yield parallel(genFn, {
