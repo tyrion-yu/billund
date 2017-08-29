@@ -348,6 +348,11 @@ function wrapToSuccGen(context, widget) {
         }
 
         // 先执行数据方法,把数据上下文传入
+        if (!widget.dataGenerator) {
+            widget.dataGenerator = function*(params) {
+                return params || {};
+            };
+        }
         const dataGen = widget.dataGenerator.call(context, params);
         const meta = widget.meta || {};
         const data = yield dataGen;
