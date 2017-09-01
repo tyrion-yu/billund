@@ -1,7 +1,14 @@
 'use strict';
+const node_path = require("path");
 
 function* action() {
     this.legoConfig = {
+        htmlConfig:{
+            path:node_path.join(process.cwd(),"/template/test.html"),
+            data:{
+                test:1
+            }
+        },
         widgets: [{
             name: 'simple-vue-widget',
             params: {
