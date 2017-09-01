@@ -59,12 +59,12 @@ function createWidgetGroup(subs, isActive) {
             subHtmls.push(sub.html);
         }
     });
-    let subIndex = "" + (subs[0] && subs[0].subIndex || "");
+    const groupIndex = subs[0].groupId;
+    const groupCls = `${WIDGET.CLASS_WIDGET_GROUP}-${groupIndex}`;
 
-    return `<div class="${WIDGET.CLASS_WIDGET_GROUP} ${subIndex ? (WIDGET.CLASS_WIDGET_GROUP+subIndex) :''} ${isActive ? 'active' : ''}" data-widget-names="${subNames.join(',')}">
+    return `<div class="${WIDGET.CLASS_WIDGET_GROUP} ${groupCls} ${isActive ? 'active' : ''}" data-widget-names="${subNames.join(',')}">
                 ${subHtmls.join('')}
             </div>`;
-
 }
 
 /**
@@ -89,9 +89,6 @@ function createMainPage(content, shouldHidden) {
  * @return {Object}
  */
 module.exports = function*(config) {
-    console.log(2);
-
-
     config = config || {};
     const widgets = config.widgets || [];
     const mostImportantWidgets = config.mostImportantWidgets || [];
@@ -109,7 +106,8 @@ module.exports = function*(config) {
         const results = subWidgets.map((subWidget) => {
             return {
                 name: subWidget.name,
-                html: createSubWidgetSection(subWidget)
+                html: createSubWidgetSection(subWidget),
+                groupId: subWidget.group
             };
         });
         return createWidgetGroup(results, hasSuccessSub);

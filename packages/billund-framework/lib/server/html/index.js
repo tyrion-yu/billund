@@ -1,6 +1,9 @@
 'use strict';
 
+const path = require('path');
 const _ = require('lodash');
+const ejs = require('ejs');
+const fs = require('fs');
 
 const legoUtils = require('billund-utils');
 
@@ -34,17 +37,14 @@ const DEFAULT_BODY_PLUGINS = [
     widgetPropsPlugin,
     backAutoRefreshPlugin
 ];
+const DEFAULT_TEMPLATE_PATH = path.resolve(__dirname, '../../../resources/html/default.html');
 
 const widgetCaches = require('lru-cache')({
     max: 1000,
     maxAge: 1000 * 60 * 60
 });
 const baseopt = {};
-
-
-const Ejs = require("ejs");
-const fs = require("fs");
-const htmlCache = {};
+const templatePathCache = {};
 
 /**
  * 初始化方法
@@ -164,25 +164,23 @@ function* execute(context) {
         return result.result.result;
     });
 
-    if(legoConfig.htmlConfig&&legoConfig.htmlConfig.path){
-        let path = legoConfig.htmlConfig.path;
-        let data = legoConfig.htmlConfig.data || {};
-        let htmlStr = htmlCache[legoConfig.htmlConfig.path] || 
-                    (htmlCache[legoConfig.htmlConfig.path] = fs.readFileSync(path,{encoding:"utf-8"}));
+    const templateStr = getTemplateStr(legoConfig);
+    context.body = ejs.render(templateStr, {
+        headerResult: headerResults.join(''),
+        bodyResult: bodyResults.join('')
+    });
+}
 
-        context.body = Ejs.render(htmlStr,Object.assign(data,{
-            headerResult:headerResults.join(''),
-            bodyResult: bodyResults.join('')
-        }));
-    }else{
-        context.body = `
-        <!DOCTYPE html>
-        <html>
-            <head>${headerResults.join('')}</head>
-            <body>${bodyResults.join('')}</body>
-        </html>
-        `;
+function getTemplateStr(legoConfig) {
+    const templatePath = legoConfig.htmlConfig && legoConfig.htmlConfig.path || DEFAULT_TEMPLATE_PATH;
+    let htmlStr = templatePathCache[templatePath];
+    if (!htmlStr) {
+        htmlStr = fs.readFileSync(templatePath, {
+            encoding: 'utf-8'
+        });
+        templatePathCache[templatePath] = htmlStr;
     }
+    return htmlStr;
 }
 
 /**
