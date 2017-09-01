@@ -59,9 +59,12 @@ function createWidgetGroup(subs, isActive) {
             subHtmls.push(sub.html);
         }
     });
-    return `<div class="${WIDGET.CLASS_WIDGET_GROUP} ${isActive ? 'active' : ''}" data-widget-names="${subNames.join(',')}">
+    let subIndex = "" + (subs[0] && subs[0].subIndex || "");
+
+    return `<div class="${WIDGET.CLASS_WIDGET_GROUP} ${subIndex ? (WIDGET.CLASS_WIDGET_GROUP+subIndex) :''} ${isActive ? 'active' : ''}" data-widget-names="${subNames.join(',')}">
                 ${subHtmls.join('')}
             </div>`;
+
 }
 
 /**
@@ -86,6 +89,9 @@ function createMainPage(content, shouldHidden) {
  * @return {Object}
  */
 module.exports = function*(config) {
+    console.log(2);
+
+
     config = config || {};
     const widgets = config.widgets || [];
     const mostImportantWidgets = config.mostImportantWidgets || [];

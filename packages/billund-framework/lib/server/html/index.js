@@ -41,6 +41,11 @@ const widgetCaches = require('lru-cache')({
 });
 const baseopt = {};
 
+
+const Ejs = require("ejs");
+const fs = require("fs");
+const htmlCache = {};
+
 /**
  * 初始化方法
  *
@@ -159,13 +164,25 @@ function* execute(context) {
         return result.result.result;
     });
 
-    context.body = `
-    <!DOCTYPE html>
-    <html>
-        <head>${headerResults.join('')}</head>
-        <body>${bodyResults.join('')}</body>
-    </html>
-    `;
+    if(legoConfig.htmlConfig&&legoConfig.htmlConfig.path){
+        let path = legoConfig.htmlConfig.path;
+        let data = legoConfig.htmlConfig.data || {};
+        let htmlStr = htmlCache[legoConfig.htmlConfig.path] || 
+                    (htmlCache[legoConfig.htmlConfig.path] = fs.readFileSync(path,{encoding:"utf-8"}));
+
+        context.body = Ejs.render(htmlStr,Object.assign(data,{
+            headerResult:headerResults.join(''),
+            bodyResult: bodyResults.join('')
+        }));
+    }else{
+        context.body = `
+        <!DOCTYPE html>
+        <html>
+            <head>${headerResults.join('')}</head>
+            <body>${bodyResults.join('')}</body>
+        </html>
+        `;
+    }
 }
 
 /**

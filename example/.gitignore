@@ -2,7 +2,7 @@
 neurons
 css
 dist
-
+yarn.lock
 # Numerous always-ignore extensions
 *.bak
 *.patch
