@@ -165,10 +165,11 @@ function* execute(context) {
     });
 
     const templateStr = getTemplateStr(legoConfig);
-    context.body = ejs.render(templateStr, {
+    const templateData = legoConfig.htmlConfig && legoConfig.htmlConfig.data || {};
+    context.body = ejs.render(templateStr, Object.assign(templateData,{
         headerResult: headerResults.join(''),
         bodyResult: bodyResults.join('')
-    });
+    }));
 }
 
 function getTemplateStr(legoConfig) {
