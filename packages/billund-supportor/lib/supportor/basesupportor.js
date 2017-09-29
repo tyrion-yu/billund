@@ -219,7 +219,7 @@ class BaseFESupportor {
      * 注册store配置
      */
     [SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG]() {
-        throw new Error(`you should impletement ${SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG} function.`);
+        throw new Error(`you should implement ${SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG} function.`);
     }
 
     /**
@@ -517,21 +517,21 @@ class BaseFESupportor {
      * 分发action的操作
      */
     dispatch() {
-        throw new Error(`you should impletement dispatch function.`);
+        throw new Error(`you should implement dispatch function.`);
     }
 
     /**
      * 获取当前的state
      */
     getState() {
-        throw new Error(`you should impletement getState function.`);
+        throw new Error(`you should implement getState function.`);
     }
 
     /**
      * 注册store变更数据监听
      */
     registStoreOnChangeListener() {
-        throw new Error(`you should impletement registStoreOnChangeListener function.`);
+        throw new Error(`you should implement registStoreOnChangeListener function.`);
     }
 
     /**

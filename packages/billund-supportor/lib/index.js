@@ -21,10 +21,10 @@ function addupRenderType() {
 
     configs.forEach((config) => {
         const renderType = config.renderType;
-        if (renderType == RenderTypeEnums.RENDER_TYPE_REACT) {
-            react++;
+        if (renderType === RenderTypeEnums.RENDER_TYPE_REACT) {
+            return react++;
         }
-        if (renderType == RenderTypeEnums.RENDER_TYPE_VUE) {
+        if (renderType === RenderTypeEnums.RENDER_TYPE_VUE) {
             vue++;
         }
     });
@@ -41,7 +41,7 @@ function addupRenderType() {
  */
 function init() {
     if (window[SupportorEnums.BROWSER_SUPPORTOR]) {
-        console.warn(`there are several different lego-supportor versions,please check.`);
+        console.warn(`there are several different billund-supportor versions, please check.`);
         return window[SupportorEnums.BROWSER_SUPPORTOR];
     }
     const renderTypeCounts = addupRenderType();

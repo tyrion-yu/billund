@@ -1270,7 +1270,7 @@ var BaseFESupportor = function () {
     }, {
         key: SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG,
         value: function value() {
-            throw new Error('you should impletement ' + SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG + ' function.');
+            throw new Error('you should implement ' + SupportorEnums.BROWSER_SUPPORTOR_REGIST_STORE_CONFIG + ' function.');
         }
 
         /**
@@ -1632,7 +1632,7 @@ var BaseFESupportor = function () {
     }, {
         key: 'dispatch',
         value: function dispatch() {
-            throw new Error('you should impletement dispatch function.');
+            throw new Error('you should implement dispatch function.');
         }
 
         /**
@@ -1642,7 +1642,7 @@ var BaseFESupportor = function () {
     }, {
         key: 'getState',
         value: function getState() {
-            throw new Error('you should impletement getState function.');
+            throw new Error('you should implement getState function.');
         }
 
         /**
@@ -1652,7 +1652,7 @@ var BaseFESupportor = function () {
     }, {
         key: 'registStoreOnChangeListener',
         value: function registStoreOnChangeListener() {
-            throw new Error('you should impletement registStoreOnChangeListener function.');
+            throw new Error('you should implement registStoreOnChangeListener function.');
         }
 
         /**
